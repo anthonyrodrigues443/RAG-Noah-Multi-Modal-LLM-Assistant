@@ -1,5 +1,4 @@
 import time
-initial = time.time()
 import cv2
 import speech_recognition as sr
 import streamlit as st
@@ -8,7 +7,6 @@ from PyPDF2 import PdfReader
 from langchain.text_splitter import CharacterTextSplitter
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
-print('total Time taken for imports : ',time.time()- initial)
 
 @st.cache_data(show_spinner=False)
 def pdf_reader(pdfs):
@@ -71,7 +69,7 @@ def get_cap():
 def speak_text(text):
     engine = pyttsx3.init()
     rate = engine.getProperty('rate')
-    engine.setProperty('rate', 150)
+    engine.setProperty('rate', 120)
     voices = engine.getProperty('voices')
     engine.setProperty('voice', voices[1].id)
     engine.say(text)
@@ -207,7 +205,6 @@ if __name__ == '__main__':
         with c1 :
             cam = st.button('📸', help='Visual input', on_click=callback)
 
-    print('time for loading entire web page : ', time.time() - initial)
     query = st.chat_input(placeholder='Message Noah')
     import txt_detection
     cap = get_cap()
