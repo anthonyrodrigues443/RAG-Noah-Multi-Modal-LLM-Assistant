@@ -1,6 +1,4 @@
 import streamlit as st
-st.write("App is starting...")
-
 import time
 import cv2
 import speech_recognition as sr
