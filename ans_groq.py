@@ -2,7 +2,7 @@ from groq import Groq
 from dotenv import load_dotenv
 import time
 import os
-
+import re
 
 load_dotenv()
 
@@ -36,10 +36,10 @@ def RAG_Groq_ans(chunks, query): #STEP 2 : User prompt response in text
         model='mixtral-8x7b-32768',
     )
     response = chat_completion.choices[0].message.content
-    return response
+    print(f"Context : {chunks}\n\n Above is the Context given, you have to answer the question below only based on the context even the examples. If the question cannot be answered from the context your answer should always be saying not much information available about the specific topic in a polite manner. If you answer anything from outside what is provided in context i will pass away so please dont every bit of response should strictly be from the context provided . \n\nQuestion : {query}")
 
-def stream_writer(response):
     for word in response.split(" "):
         yield word + " "
         time.sleep(0.002)
         
+

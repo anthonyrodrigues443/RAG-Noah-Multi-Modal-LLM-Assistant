@@ -245,10 +245,9 @@ if __name__ == '__main__':
             context_chunk = st.session_state.messages
             chat_history = f"This the our conversation so if the user ask something which is incomplete and you can make sense of it from the previous question do answer it correctly. Chat history : {context_chunk}(Also never mention anything about the contexts until the user asks). If the user asks anything irrelevant from the context just answer with not much infomation available. "
             with st.chat_message(name='assistant', avatar=assistant_avatar_path):
-                response = ans_groq.RAG_Groq_ans(chunks=chat_history+rel_chunks, query=query)
-                response_ = st.write_stream(ans_groq.stream_writer(response))
-                speak_text(response_)
-
+                response = st.write_stream(ans_groq.RAG_Groq_ans(chunks=chat_history+rel_chunks, query=query))
+                speak_text(response)
             st.session_state.messages.append({"role": "assistant", "content": response})
     except Exception as ex:
+        st.write(ex)
         st.markdown('<h4><font color="yellow"><center>Submit the Context doc first.', unsafe_allow_html=True)

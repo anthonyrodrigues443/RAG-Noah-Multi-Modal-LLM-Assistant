@@ -64,8 +64,8 @@ def text_extraction(cap):
             st.session_state.last_frame = frame.copy()
 
         if capture:  # click
-            capture_frame = st.session_state.last_frame
             cropped_image_path = 'imagefiles/cropped.png'            
+            capture_frame = st.session_state.last_frame
             cropped_image = capture_frame[top_line:bottom_line, :]
             grey = cv2.cvtColor(cropped_image, cv2.COLOR_BGR2GRAY)
             cv2.imwrite(cropped_image_path, grey)
