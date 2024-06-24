@@ -1,11 +1,11 @@
 # Smart_glasses_project
 RAG LLM, General LLM with capability of real time computer vision tasks.  Ultimate Goal is to integrate the software in a smart glasses.
 
-(fast but low accuracy)
-yolov8n model download link : 'https://github.com/ultralytics/assets/releases/download/v8.1.0/yolov8n.pt'
 
-(slow but good accuracy)
-yolov9c model download link : 'https://github.com/ultralytics/assets/releases/download/v8.1.0/yolov9c.pt'
+Object Detection (In Noah(LLM with vision capabilities))
+<b>Just select the model that fits your pc specs best and use replace the model name thats it !</b>
+yolov8 series models download link : 'https://docs.ultralytics.com/tasks/detect/#models'
 
-(very slow but high accuracy)
-yolov9c model download link : 'https://github.com/ultralytics/assets/releases/download/v8.2.0/yolov9e.pt'
+yolov9 series models download link : 'https://docs.ultralytics.com/models/yolov9/#performance-on-ms-coco-dataset'
+
+Note: yolov10 series doesnt work this way has some other requirements so if you want you can checkout -
