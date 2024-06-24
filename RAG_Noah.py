@@ -8,6 +8,8 @@ from langchain.text_splitter import CharacterTextSplitter
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 
+st.set_page_config(page_title='Smart glasses', page_icon=':👓:')
+
 @st.cache_data(show_spinner=False)
 def pdf_reader(pdfs):
     text = ''''''
@@ -84,7 +86,6 @@ def clear_history():
                             unsafe_allow_html=True)
 
 
-st.set_page_config(page_title='Smart glasses', page_icon=':👓:')
 st.header('RAG Noah :eyeglasses: ')
 
 st.markdown(
