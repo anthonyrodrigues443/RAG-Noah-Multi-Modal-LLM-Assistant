@@ -1,7 +1,9 @@
+import streamlit as st
+st.write("App is starting...")
+
 import time
 import cv2
 import speech_recognition as sr
-import streamlit as st
 import pyttsx3
 from PyPDF2 import PdfReader
 from langchain.text_splitter import CharacterTextSplitter
