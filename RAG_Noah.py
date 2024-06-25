@@ -51,7 +51,8 @@ def check_audio_device():
     try:
         p.get_default_input_device_info()
         return True
-    except:
+    except Exception as ex:
+        print(ex)
         return False
     finally:
         p.terminate()
