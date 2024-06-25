@@ -9,7 +9,6 @@ imagefiles/cropped.png
 
 #API KEYS
 .env
-.streamlit/secrets.toml
 
 #temperary
 audiofiles_Noah/
