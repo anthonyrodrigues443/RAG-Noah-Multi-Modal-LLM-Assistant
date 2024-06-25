@@ -267,5 +267,4 @@ if __name__ == '__main__':
                 speak_text(response)
             st.session_state.messages.append({"role": "assistant", "content": response})
     except Exception as ex:
-        st.write(ex)
         st.markdown('<h4><font color="yellow"><center>Submit the Context doc first.', unsafe_allow_html=True)
