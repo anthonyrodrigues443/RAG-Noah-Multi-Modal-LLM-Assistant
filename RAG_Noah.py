@@ -1,3 +1,4 @@
+import pyaudio
 import cv2
 import streamlit as st
 import time
@@ -43,6 +44,18 @@ def get_vectorstore(chunks):
     vectorstore = FAISS.from_texts(texts=chunks, embedding=embeddings)
     print('vectorstore : ', time.time()-ini)
     return vectorstore
+
+
+def check_audio_device():
+    p = pyaudio.PyAudio()
+    try:
+        p.get_default_input_device_info()
+        return True
+    except:
+        return False
+    finally:
+        p.terminate()
+
 
 def rec_n_ret():    #STEP 1 : User speech to text with mic
     r = sr.Recognizer()
@@ -215,7 +228,11 @@ if __name__ == '__main__':
 
     if record:
         with st.spinner('Listening...'):
+        if check_audio_device():
             text = rec_n_ret()
+        else:
+            st.sidebar.write('Error connecting Microphone')
+            
 
     if cam or st.session_state.start_func:
         # st.write('Working on this feature will be available soon.')
