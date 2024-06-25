@@ -1,8 +1,8 @@
+from audio_recorder_streamlit import audio_recorder
 import assemblyai as aai
 import pyaudio
 import cv2
 import streamlit as st
-from audio_recorder_streamlit import audio_recorder
 import time
 import os
 import pyttsx3
