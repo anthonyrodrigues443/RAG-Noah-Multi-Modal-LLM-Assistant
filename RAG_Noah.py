@@ -218,10 +218,12 @@ if __name__ == '__main__':
             text = rec_n_ret()
 
     if cam or st.session_state.start_func:
-        text = txt_detection.text_extraction(cap)
-        st.session_state.start_func = False
-        if text == 'No text detected' :
-            text = None
+        st.write('camera usage stopped')
+
+        # text = txt_detection.text_extraction(cap)
+        # st.session_state.start_func = False
+        # if text == 'No text detected' :
+            # text = None
 
     if text:
         query = text
