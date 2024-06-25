@@ -4,6 +4,9 @@ smart_glasses_proj/
 # Python byte-compiled files
 __pycache__/
 
+#cropped_image
+imagefiles/cropped.png
+
 #API KEYS
 .env
 

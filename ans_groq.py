@@ -24,21 +24,48 @@ def Groq_ans(query): #STEP 2 : User prompt response in text
     return response
 
 
-def RAG_Groq_ans(chunks, query): #STEP 2 : User prompt response in text
-    client = Groq(api_key=GROQ_API_KEY)
+def RAG_Groq_ans(chat_history, context_chunks, query): #STEP 2 : User prompt response in text
+    client = Groq(api_key=GROQ_API_KEY2)
+    prompt = f"""
+You are an AI assistant with access ONLY to the information provided below. You MUST NOT use any external knowledge.
+
+Chat History:
+{chat_history}
+
+Additional Context:
+{context_chunks}
+
+STRICT INSTRUCTIONS:
+1. ONLY use the information from the Chat History and Additional Context to answer the question.
+2. If the question CANNOT be answered using ONLY the provided information, your response MUST be:
+   "I don't have enough information in the given context to answer this question."
+3. DO NOT use any external knowledge or make any assumptions.
+4. If the question is completely unrelated to the context, respond with:
+   "The question is unrelated to the information I have. I can only answer questions about the topics in the given context."
+5. NEVER answer questions about general knowledge, current events, or any topic not explicitly covered in the provided context.
+6. If asked about your capabilities or the source of your information, only refer to the given context.
+
+Current Question: {query}
+
+Answer (remember, ONLY use the provided information):
+"""
     chat_completion = client.chat.completions.create(    
         messages=[
             {
                 "role": "user",
-                "content": f"Context : {chunks}\n\n Based on the above context only provide the answer to the question below. If the question cannot be answered from the context your answer should always be saying not much information available about the specific topic in a polite manner. If you answer anything from outside what is provided in context i will pass away so please dont . \n\nQuestion : {query}",
+                "content": f"Context :{prompt}",
             }
         ],
         model='mixtral-8x7b-32768',
     )
     response = chat_completion.choices[0].message.content
-    print(f"Context : {chunks}\n\n Above is the Context given, you have to answer the question below only based on the context even the examples. If the question cannot be answered from the context your answer should always be saying not much information available about the specific topic in a polite manner. If you answer anything from outside what is provided in context i will pass away so please dont every bit of response should strictly be from the context provided . \n\nQuestion : {query}")
+    print('Input for LLM : ', prompt)
+    print('Output of LLM : ',response)
 
-    for word in response.split(" "):
+
+    tokens = re.findall(r'\S+|\n|\t', response)
+
+    for word in tokens:
         yield word + " "
         time.sleep(0.002)
         

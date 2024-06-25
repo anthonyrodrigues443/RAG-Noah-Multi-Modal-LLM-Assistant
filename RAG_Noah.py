@@ -91,8 +91,8 @@ st.header('RAG Noah :eyeglasses: ')
 st.markdown(
     """
     <style>
-    .st-emotion-cache-ul70r3 li{
-        font-size: 1.25rem;
+    .st-emotion-cache-cnbvxy li{
+        font-size: 1.15rem;
     }
     </style>
     """, unsafe_allow_html=True
@@ -102,7 +102,7 @@ st.markdown(
     """
     <style>
     [data-testid="stChatMessageContent"] * {
-        font-size: 1.25rem;
+        font-size: 1.15rem;
         padding: 1px;
         margin: 0px;
     }
@@ -239,14 +239,12 @@ if __name__ == '__main__':
 
             rel_chunks = ''
             for i in range(len(chunks_)):
-                rel_chunks = rel_chunks + f'\n\n Context {i+1}: ' + chunks_[i].page_content
+                rel_chunks = rel_chunks + f'Context {i+1}: ' + chunks_[i].page_content
 
             st.session_state.messages.append({"role": "user", "content": query})
             file_num = len(st.session_state.messages)
-            context_chunk = st.session_state.messages
-            chat_history = f"This the our conversation so if the user ask something which is incomplete and you can make sense of it from the previous question do answer it correctly. Chat history : {context_chunk}(Also never mention anything about the contexts until the user asks). If the user asks anything irrelevant from the context just answer with not much infomation available. "
             with st.chat_message(name='assistant', avatar=assistant_avatar_path):
-                response = st.write_stream(ans_groq.RAG_Groq_ans(chunks=chat_history+rel_chunks, query=query))
+                response = st.write_stream(ans_groq.RAG_Groq_ans(st.session_state.messages, rel_chunks, query))
                 speak_text(response)
             st.session_state.messages.append({"role": "assistant", "content": response})
     except Exception as ex:
