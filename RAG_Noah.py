@@ -228,10 +228,10 @@ if __name__ == '__main__':
 
     if record:
         with st.spinner('Listening...'):
-        if check_audio_device():
-            text = rec_n_ret()
-        else:
-            st.sidebar.write('Error connecting Microphone')
+            if check_audio_device():
+                text = rec_n_ret()
+            else:
+                st.sidebar.write('Error connecting Microphone')
             
 
     if cam or st.session_state.start_func:
