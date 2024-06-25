@@ -2,7 +2,7 @@ opencv-python-headless==4.10.0.84
 groq==0.5.0
 python-dotenv==1.0.0
 SpeechRecognition==3.10.4
-streamlit==1.35.0
+streamlit==1.27.0
 PyPDF2==3.0.1
 langchain==0.2.0
 langchain_community==0.2.0
@@ -12,8 +12,6 @@ ultralytics==8.2.32
 pyttsx3==2.90
 sentence-transformers==3.0.1
 faiss-cpu==1.8.0.post1
-gTTs==2.5.1
-pygame==2.5.2
 mediapipe==0.10.14
 PyAudio==0.2.14
 pathlib==1.0.1
@@ -116,7 +114,7 @@ audio-recorder-streamlit==0.0.9
 # packaging                 23.2
 # pandas                    2.2.2
 # pathlib                   1.0.1
-# pillow                    10.3.0
+# Pillow                    9.5.0
 # pip                       24.1
 # protobuf                  4.25.3
 # psutil                    6.0.0
@@ -167,8 +165,7 @@ audio-recorder-streamlit==0.0.9
 # soupsieve                 2.5
 # SpeechRecognition         3.10.4
 # SQLAlchemy                2.0.31
-# streamlit                 1.29.0
-# streamlit-webrtc          0.47.7
+# streamlit                 1.27.0
 # sympy                     1.12.1
 # tbb                       2021.13.0
 # tenacity                  8.4.2
