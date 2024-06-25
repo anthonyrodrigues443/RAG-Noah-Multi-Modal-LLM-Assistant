@@ -218,12 +218,10 @@ if __name__ == '__main__':
             text = rec_n_ret()
 
     if cam or st.session_state.start_func:
-        st.write('stopped text detection to check is it memory problem')
-
-        # text = txt_detection.text_extraction(cap)
-        # st.session_state.start_func = False
-        # if text == 'No text detected' :
-            # text = None
+        text = txt_detection.text_extraction(cap)
+        st.session_state.start_func = False
+        if text == 'No text detected' :
+            text = None
 
     if text:
         query = text
