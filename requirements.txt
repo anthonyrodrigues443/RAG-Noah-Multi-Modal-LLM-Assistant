@@ -16,16 +16,25 @@ gTTs==2.5.1
 pygame==2.5.2
 mediapipe==0.10.14
 PyAudio==0.2.14
+pathlib==1.0.1
+websockets==12.0
+assemblyai==0.27.0
+
+##Suggestion - If you get stuck while installing any of these just try installing manually once 
 
 # Package                   Version
 # ------------------------- -----------
 # absl-py                   2.1.0
 # aiohttp                   3.9.5
+# aioice                    0.9.0
+# aiortc                    1.9.0
 # aiosignal                 1.3.1
 # altair                    5.3.0
 # annotated-types           0.7.0
 # anyio                     4.4.0
+# assemblyai                0.27.0
 # attrs                     23.2.0
+# av                        12.1.0
 # beautifulsoup4            4.12.3
 # blinker                   1.8.2
 # cachetools                5.3.3
@@ -36,10 +45,12 @@ PyAudio==0.2.14
 # colorama                  0.4.6
 # comtypes                  1.4.4
 # contourpy                 1.2.1
+# cryptography              42.0.8
 # cvzone                    1.6.1
 # cycler                    0.12.1
 # dataclasses-json          0.6.7
 # distro                    1.9.0
+# dnspython                 2.6.1
 # docopt                    0.6.2
 # easyocr                   1.7.1
 # faiss-cpu                 1.8.0.post1
@@ -50,6 +61,7 @@ PyAudio==0.2.14
 # fsspec                    2024.6.0
 # gitdb                     4.0.11
 # GitPython                 3.1.43
+# google-crc32c             1.5.0
 # greenlet                  3.0.3
 # groq                      0.5.0
 # gTTS                      2.5.1
@@ -58,6 +70,7 @@ PyAudio==0.2.14
 # httpx                     0.27.0
 # huggingface-hub           0.23.4
 # idna                      3.7
+# ifaddr                    0.2.0
 # imageio                   2.34.2
 # intel-openmp              2021.4.0
 # jax                       0.4.30
@@ -97,6 +110,7 @@ PyAudio==0.2.14
 # orjson                    3.10.5
 # packaging                 24.1
 # pandas                    2.2.2
+# pathlib                   1.0.1
 # pillow                    10.3.0
 # pip                       24.1
 # protobuf                  4.25.3
@@ -109,9 +123,12 @@ PyAudio==0.2.14
 # pydantic                  2.7.4
 # pydantic_core             2.18.4
 # pydeck                    0.9.1
+# pyee                      11.1.0
 # pygame                    2.5.2
 # Pygments                  2.18.0
 # pyjsparser                2.7.1
+# pylibsrtp                 0.10.0
+# pyOpenSSL                 24.1.0
 # pyparsing                 3.1.2
 # PyPDF2                    3.0.1
 # pypiwin32                 223
@@ -141,10 +158,12 @@ PyAudio==0.2.14
 # smmap                     5.0.1
 # sniffio                   1.3.1
 # sounddevice               0.4.7
+# soundfile                 0.12.1
 # soupsieve                 2.5
 # SpeechRecognition         3.10.4
 # SQLAlchemy                2.0.31
 # streamlit                 1.35.0
+# streamlit-webrtc          0.47.7
 # sympy                     1.12.1
 # tbb                       2021.13.0
 # tenacity                  8.4.2
@@ -166,4 +185,6 @@ PyAudio==0.2.14
 # ultralytics-thop          2.0.0
 # urllib3                   2.2.2
 # watchdog                  4.0.1
+# websockets                12.0
 # yarl                      1.9.4
+
