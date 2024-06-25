@@ -207,8 +207,8 @@ if __name__ == '__main__':
             cam = st.button('📸', help='Visual input', on_click=callback)
 
     query = st.chat_input(placeholder='Message Noah')
-    # import txt_detection
-    # cap = get_cap()
+    import txt_detection
+    cap = get_cap()
     import ans_groq
 
     text = None
@@ -218,11 +218,11 @@ if __name__ == '__main__':
             text = rec_n_ret()
 
     if cam or st.session_state.start_func:
-        st.write('Working on this feature will be available soon.')
-        # text = txt_detection.text_extraction(cap)
-        # st.session_state.start_func = False
-        # if text == 'No text detected' :
-        #     text = None
+        # st.write('Working on this feature will be available soon.')
+        text = txt_detection.text_extraction(cap)
+        st.session_state.start_func = False
+        if text == 'No text detected' :
+            text = None
 
     if text:
         query = text
