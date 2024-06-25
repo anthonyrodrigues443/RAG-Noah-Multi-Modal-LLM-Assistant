@@ -1,6 +1,6 @@
+import cv2
 import streamlit as st
 import time
-import cv2
 import speech_recognition as sr
 import pyttsx3
 from PyPDF2 import PdfReader
