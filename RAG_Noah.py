@@ -218,7 +218,7 @@ if __name__ == '__main__':
             text = rec_n_ret()
 
     if cam or st.session_state.start_func:
-        st.write('camera usage stopped')
+        st.write('stopped text detection to check is it memory problem')
 
         # text = txt_detection.text_extraction(cap)
         # st.session_state.start_func = False
