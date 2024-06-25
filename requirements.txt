@@ -1,3 +1,4 @@
+opencv-python-headless==4.10.0.84
 groq==0.5.0
 python-dotenv==1.0.0
 SpeechRecognition==3.10.4
@@ -14,7 +15,6 @@ faiss-cpu==1.8.0.post1
 gTTs==2.5.1
 pygame==2.5.2
 mediapipe==0.10.14
-opencv-python-headless==4.10.0.84
 
 
 # I did miss out and did not update the requirements.txt file at some moments, so for any module import errors you'll can just download the list i have mentioned below with their versions I have 

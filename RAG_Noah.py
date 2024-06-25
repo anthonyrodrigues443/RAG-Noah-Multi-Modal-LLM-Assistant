@@ -207,8 +207,8 @@ if __name__ == '__main__':
             cam = st.button('📸', help='Visual input', on_click=callback)
 
     query = st.chat_input(placeholder='Message Noah')
-    import txt_detection
-    cap = get_cap()
+    # import txt_detection
+    # cap = get_cap()
     import ans_groq
 
     text = None
