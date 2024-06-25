@@ -20,6 +20,7 @@ pathlib==1.0.1
 websockets==12.0
 assemblyai==0.27.0
 sounddevice==0.4.7
+audio-recorder-streamlit==0.0.9
 
 ##Suggestion - If you get stuck while installing any of these just try installing manually once 
 
