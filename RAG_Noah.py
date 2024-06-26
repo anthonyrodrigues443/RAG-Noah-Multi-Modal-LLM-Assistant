@@ -226,7 +226,8 @@ if __name__ == '__main__':
                 icon_name="microphone",
                 icon_size="2x"
                 )
-            st.sidebar.audio(audio_bytes)
+            if audio_bytes:
+                st.sidebar.audio(audio_bytes)
 
     query = st.chat_input(placeholder='Message Noah')
     import txt_detection
