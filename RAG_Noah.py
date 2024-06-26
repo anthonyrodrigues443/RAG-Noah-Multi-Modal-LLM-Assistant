@@ -219,14 +219,13 @@ if __name__ == '__main__':
         with c1 :
             cam = st.button('📸', help='Visual input', on_click=callback)
         with c2 :
-            record = st.button('🎙️', help='Audio input')
-            record_stop = st.button('🟥', help='Audio input')
+            text = speech_to_text("🎙️", "🟥", just_once=True)
+
     query = st.chat_input(placeholder='Message Noah')
     import txt_detection
     cap = get_cap()
     import ans_groq
 
-    text = speech_to_text(record, record_stop, just_once=True)
 
 
     if cam or st.session_state.start_func:
