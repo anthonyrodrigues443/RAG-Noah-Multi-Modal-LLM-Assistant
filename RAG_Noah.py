@@ -236,7 +236,6 @@ if __name__ == '__main__':
     import ans_groq
 
     text = None
-    st.write('time taken to reach to transcription stage', time.time()-ini)
     if audio_bytes:
         with st.sidebar:
             with st.spinner('Transcribing Text'):
