@@ -168,6 +168,17 @@ st.markdown(
 </style>
 """, unsafe_allow_html=True)
 
+st.markdown(
+    """
+<style>
+    .myButton {
+    font-size: 20px;
+    }
+
+</style>
+""", unsafe_allow_html=True)
+
+
 user_avatar_path = "imagefiles/user_avatar.png"
 assistant_avatar_path = "imagefiles/assistant_avatar.png"
 
