@@ -1,6 +1,7 @@
 import time
-from audio_recorder_streamlit import audio_recorder
-import assemblyai as aai
+# from audio_recorder_streamlit import audio_recorder
+# import assemblyai as aai
+from streamlit_mic_recorder import speech_to_text
 import pyaudio
 import cv2
 import streamlit as st
@@ -59,21 +60,23 @@ def check_audio_device():
         p.terminate()
 
 
-def speech_to_text(audio_bytes_):    #STEP 1 : User speech to text with mic
-    FILE_URL = 'audiofiles_RAGNoah/input_speech.mp3'
+# def speech_to_text():    #STEP 1 : User speech to text with mic
+#     text = speech_to_text()
+#     return text
+    # FILE_URL = 'audiofiles_RAGNoah/input_speech.mp3'
 
-    with open(FILE_URL, "wb") as f:
-        f.write(audio_bytes_)
+    # with open(FILE_URL, "wb") as f:
+    #     f.write(audio_bytes_)
 
-    aai.settings.api_key = st.secrets["AAI_API_KEY"]
+    # aai.settings.api_key = st.secrets["AAI_API_KEY"]
 
-    transcriber = aai.Transcriber()
-    transcript = transcriber.transcribe(FILE_URL)
+    # transcriber = aai.Transcriber()
+    # transcript = transcriber.transcribe(FILE_URL)
 
-    if transcript.status == aai.TranscriptStatus.error:
-        return None
-    else:
-        return transcript.text
+    # if transcript.status == aai.TranscriptStatus.error:
+    #     return None
+    # else:
+    #     return transcript.text
 
 
 @st.cache_resource(show_spinner=False)
@@ -210,6 +213,7 @@ if __name__ == '__main__':
         if message['role'] == 'assistant' :
             with st.chat_message(message['role'], avatar=assistant_avatar_path):
                 st.markdown(message['content'])
+    text = None
 
     with st.sidebar:
         c1, c2 = st.columns(2)
@@ -217,26 +221,26 @@ if __name__ == '__main__':
             cam = st.button('📸', help='Visual input', on_click=callback)
 
         with c2 :
-            audio_bytes = audio_recorder(
-                text=" ",
-                pause_threshold=2,  # Allow up to 2 seconds of silence
-                recording_color="#e8b62c",
-                neutral_color="#6aa36f",
-                icon_name="microphone",
-                icon_size="2x"
-                )
+            text = speech_to_text("🎙️", "🎙️")
+            # audio_bytes = audio_recorder(
+            #     text=" ",
+            #     pause_threshold=2,  # Allow up to 2 seconds of silence
+            #     recording_color="#e8b62c",
+            #     neutral_color="#6aa36f",
+            #     icon_name="microphone",
+            #     icon_size="2x"
+            #     )
     query = st.chat_input(placeholder='Message Noah')
     import txt_detection
     cap = get_cap()
     import ans_groq
 
-    text = None
-    if audio_bytes:
-        with st.sidebar:
-            with st.spinner('Transcribing Text'):
-                text = speech_to_text(audio_bytes)
-                if text == None:
-                    st.sidebar.write('Some error encountered please try again...')
+    # if audio_bytes:
+    #     with st.sidebar:
+    #         with st.spinner('Transcribing Text'):
+    #             text = speech_to_text(audio_bytes)
+    #             if text == None:
+    #                 st.sidebar.write('Some error encountered please try again...')
 
     if cam or st.session_state.start_func:
         # st.write('Working on this feature will be available soon.')
