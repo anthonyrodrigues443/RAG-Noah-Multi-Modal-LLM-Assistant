@@ -1,6 +1,4 @@
 import time
-# from audio_recorder_streamlit import audio_recorder
-# import assemblyai as aai
 from streamlit_mic_recorder import speech_to_text
 import pyaudio
 import cv2
@@ -40,7 +38,7 @@ def get_text_chunks(text):
 @st.cache_resource(show_spinner=False)
 def get_vectorstore(chunks):
     ini = time.time()
-    embeddings = HuggingFaceEmbeddings(model_name="hkunlp/instructor-xl")
+    embeddings = HuggingFaceEmbeddings(model_name="nomic-ai/nomic-embed-text-v1")
     print('embeddings : ', time.time()-ini)
     ini = time.time()
     vectorstore = FAISS.from_texts(texts=chunks, embedding=embeddings)
@@ -221,26 +219,15 @@ if __name__ == '__main__':
         with c1 :
             cam = st.button('📸', help='Visual input', on_click=callback)
         with c2 :
-            text = speech_to_text(" 🎙️", " 🟥", just_once=True)
-            # audio_bytes = audio_recorder(
-            #     text=" ",
-            #     pause_threshold=2,  # Allow up to 2 seconds of silence
-            #     recording_color="#e8b62c",
-            #     neutral_color="#6aa36f",
-            #     icon_name="microphone",
-            #     icon_size="2x"
-            #     )
+            record = st.button('🎙️', help='Audio input')
+            record_stop = st.button('🟥', help='Audio input')
     query = st.chat_input(placeholder='Message Noah')
     import txt_detection
     cap = get_cap()
     import ans_groq
 
-    # if audio_bytes:
-    #     with st.sidebar:
-    #         with st.spinner('Transcribing Text'):
-    #             text = speech_to_text(audio_bytes)
-    #             if text == None:
-    #                 st.sidebar.write('Some error encountered please try again...')
+    text = speech_to_text(record, record_stop, just_once=True)
+
 
     if cam or st.session_state.start_func:
         # st.write('Working on this feature will be available soon.')
