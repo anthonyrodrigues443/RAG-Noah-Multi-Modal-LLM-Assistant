@@ -226,10 +226,11 @@ if __name__ == '__main__':
                 icon_name="microphone",
                 icon_size="2x"
                 )
-            if audio_bytes:
+            try:
                 st.sidebar.write('audio captured')
                 st.sidebar.audio(audio_bytes)
-
+            except Exception as e:
+                pass
     query = st.chat_input(placeholder='Message Noah')
     import txt_detection
     cap = get_cap()
