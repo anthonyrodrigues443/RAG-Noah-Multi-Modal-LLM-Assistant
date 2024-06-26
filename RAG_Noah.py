@@ -10,9 +10,6 @@ from PyPDF2 import PdfReader
 from langchain.text_splitter import CharacterTextSplitter
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
-from dotenv import load_dotenv
-
-load_dotenv()
 
 st.set_page_config(page_title='Smart glasses', page_icon=':👓:')
 
@@ -69,7 +66,8 @@ def speech_to_text(audio_bytes_):    #STEP 1 : User speech to text with mic
     with open(FILE_URL, "wb") as f:
         f.write(audio_bytes_)
 
-    aai.settings.api_key = os.getenv('AAI_API_KEY')
+    aai.settings.api_key = st.secrets["AAI_API_KEY"]
+
     transcriber = aai.Transcriber()
     transcript = transcriber.transcribe(FILE_URL)
 
@@ -107,7 +105,7 @@ st.markdown(
     """
     <style>
     .st-emotion-cache-cnbvxy li{
-        font-size: 1.15rem;
+        font-size: 1.25rem;
     }
     </style>
     """, unsafe_allow_html=True
@@ -117,7 +115,7 @@ st.markdown(
     """
     <style>
     [data-testid="stChatMessageContent"] * {
-        font-size: 1.15rem;
+        font-size: 1.25rem;
         padding: 1px;
         margin: 0px;
     }
@@ -221,16 +219,14 @@ if __name__ == '__main__':
             cam = st.button('📸', help='Visual input', on_click=callback)
 
         with c2 :
-            audio_recorder_placeholder = st.empty()
-            with audio_recorder_placeholder:
-                audio_bytes = audio_recorder(
-                    text=" ",
-                    pause_threshold=2,  # Allow up to 2 seconds of silence
-                    recording_color="#e8b62c",
-                    neutral_color="#6aa36f",
-                    icon_name="microphone",
-                    icon_size="2x"
-                    )
+            audio_bytes = audio_recorder(
+                text=" ",
+                pause_threshold=2,  # Allow up to 2 seconds of silence
+                recording_color="#e8b62c",
+                neutral_color="#6aa36f",
+                icon_name="microphone",
+                icon_size="2x"
+                )
 
     query = st.chat_input(placeholder='Message Noah')
     import txt_detection
