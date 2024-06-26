@@ -221,7 +221,7 @@ if __name__ == '__main__':
             cam = st.button('📸', help='Visual input', on_click=callback)
 
         with c2 :
-            text = speech_to_text("start", "stop")
+            text = speech_to_text("🎙️", " 🟥", just_once=True)
             # audio_bytes = audio_recorder(
             #     text=" ",
             #     pause_threshold=2,  # Allow up to 2 seconds of silence
