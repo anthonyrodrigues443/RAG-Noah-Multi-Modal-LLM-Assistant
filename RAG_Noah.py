@@ -219,9 +219,9 @@ if __name__ == '__main__':
         c1, c2 = st.columns(2)
         with c1 :
             cam = st.button('📸', help='Visual input', on_click=callback)
-
+        st.button("🎙️")
         with c2 :
-            text = speech_to_text("🎙️", " 🟥", just_once=True)
+            text = speech_to_text(" 🎙️ ", " 🟥", just_once=True)
             # audio_bytes = audio_recorder(
             #     text=" ",
             #     pause_threshold=2,  # Allow up to 2 seconds of silence
