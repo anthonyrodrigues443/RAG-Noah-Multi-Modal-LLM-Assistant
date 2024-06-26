@@ -1,10 +1,10 @@
+import time
+ini = time.time()
 from audio_recorder_streamlit import audio_recorder
 import assemblyai as aai
 import pyaudio
 import cv2
 import streamlit as st
-import time
-import os
 import pyttsx3
 from PyPDF2 import PdfReader
 from langchain.text_splitter import CharacterTextSplitter
@@ -237,7 +237,7 @@ if __name__ == '__main__':
     import ans_groq
 
     text = None
-
+    st.write('time taken to reach to transcription stage', time.time()-ini)
     if audio_bytes:
         with st.spinner('Transcribing Text'):
             print('\n\nntranscription started')
