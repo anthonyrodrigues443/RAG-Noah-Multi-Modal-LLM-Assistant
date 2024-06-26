@@ -98,7 +98,6 @@ def clear_history():
         st.sidebar.markdown('<h1><center>History cleared</center></h1>', 
                             unsafe_allow_html=True)
 
-
 st.header('RAG Noah :eyeglasses: ')
 
 st.markdown(
@@ -236,7 +235,10 @@ if __name__ == '__main__':
     text = None
 
     if audio_bytes:
+        ini = time.time()
         text = speech_to_text(audio_bytes)
+        fin = time.time()
+        print('time taken for transcription : ',fin - ini)
         if text == None:
             st.sidebar.write('Some error encountered please try again...')
 
