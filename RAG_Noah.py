@@ -1,14 +1,18 @@
 import time
 initial = time.time()
+import pyaudio
 import cv2
-import speech_recognition as sr
 import streamlit as st
 import pyttsx3
 from PyPDF2 import PdfReader
 from langchain.text_splitter import CharacterTextSplitter
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
+import speech_recognition as sr
 print('total Time taken for imports : ',time.time()- initial)
+
+
+st.set_page_config(page_title='Smart glasses', page_icon=':👓:')
 
 @st.cache_data(show_spinner=False)
 def pdf_reader(pdfs):
@@ -37,12 +41,13 @@ def get_text_chunks(text):
 @st.cache_resource(show_spinner=False)
 def get_vectorstore(chunks):
     ini = time.time()
-    embeddings = HuggingFaceEmbeddings(model_name="hkunlp/instructor-xl")
+    embeddings = HuggingFaceEmbeddings(model_name="nomic-ai/nomic-embed-text-v1", model_kwargs={'trust_remote_code': True})
     print('embeddings : ', time.time()-ini)
     ini = time.time()
     vectorstore = FAISS.from_texts(texts=chunks, embedding=embeddings)
     print('vectorstore : ', time.time()-ini)
     return vectorstore
+
 
 def rec_n_ret():    #STEP 1 : User speech to text with mic
     r = sr.Recognizer()
@@ -64,6 +69,7 @@ def rec_n_ret():    #STEP 1 : User speech to text with mic
         st.write(MyText+' could you please repeat ?')
         return None
 
+
 @st.cache_resource(show_spinner=False)
 def get_cap():
     return cv2.VideoCapture(2)
@@ -71,7 +77,7 @@ def get_cap():
 def speak_text(text):
     engine = pyttsx3.init()
     rate = engine.getProperty('rate')
-    engine.setProperty('rate', 150)
+    engine.setProperty('rate', 120)
     voices = engine.getProperty('voices')
     engine.setProperty('voice', voices[1].id)
     engine.say(text)
@@ -85,19 +91,26 @@ def clear_history():
         st.sidebar.markdown('<h1><center>History cleared</center></h1>', 
                             unsafe_allow_html=True)
 
-
-st.set_page_config(page_title='Smart glasses', page_icon=':👓:')
 st.header('RAG Noah :eyeglasses: ')
 
 st.markdown(
     """
     <style>
-    .st-emotion-cache-ul70r3 li{
+    .st-emotion-cache-cnbvxy li{
         font-size: 1.25rem;
     }
     </style>
     """, unsafe_allow_html=True
 )
+
+st.markdown('''
+<style>
+.monospace {
+    font-family: monospace;
+    white-space: pre;
+}
+</style>
+''', unsafe_allow_html=True)
 
 st.markdown(
     """
@@ -155,6 +168,7 @@ st.markdown(
 </style>
 """, unsafe_allow_html=True)
 
+
 user_avatar_path = "imagefiles/user_avatar.png"
 assistant_avatar_path = "imagefiles/assistant_avatar.png"
 
@@ -184,6 +198,7 @@ if __name__ == '__main__':
     if vec_store is not None:
         st.session_state.vec_store = vec_store
     clear_history()
+
     if "messages" not in st.session_state:
         st.session_state.messages = []
     if 'start_func' not in st.session_state:
@@ -199,6 +214,7 @@ if __name__ == '__main__':
         if message['role'] == 'assistant' :
             with st.chat_message(message['role'], avatar=assistant_avatar_path):
                 st.markdown(message['content'])
+    text = None
 
     with st.sidebar:
         c1, c2 = st.columns(2)
@@ -229,6 +245,7 @@ if __name__ == '__main__':
         query = text
 
     vec_store = st.session_state.get('vec_store')
+
     try:
         formatted_query = ''
         if query:
@@ -241,17 +258,18 @@ if __name__ == '__main__':
 
             rel_chunks = ''
             for i in range(len(chunks_)):
-                rel_chunks = rel_chunks + f'\n\n Context {i+1}: ' + chunks_[i].page_content
+                rel_chunks = rel_chunks + f'Context {i+1}: ' + chunks_[i].page_content
 
             st.session_state.messages.append({"role": "user", "content": query})
             file_num = len(st.session_state.messages)
-            context_chunk = st.session_state.messages
-            chat_history = f"This the our conversation so if the user ask something which is incomplete and you can make sense of it from the previous question do answer it correctly. Chat history : {context_chunk}(Also never mention anything about the contexts until the user asks). If the user asks anything irrelevant from the context just answer with not much infomation available. "
             with st.chat_message(name='assistant', avatar=assistant_avatar_path):
-                response = ans_groq.RAG_Groq_ans(chunks=chat_history+rel_chunks, query=query)
-                response_ = st.write_stream(ans_groq.stream_writer(response))
-                speak_text(response_)
+                st.markdown('<div class="monospace">', unsafe_allow_html=True)
+                response = st.write_stream(ans_groq.RAG_Groq_ans(st.session_state.messages, rel_chunks, query))
+                st.markdown('</div>', unsafe_allow_html=True)
 
+                speak_text(response)
             st.session_state.messages.append({"role": "assistant", "content": response})
     except Exception as ex:
+        # st.write(ex)
         st.markdown('<h4><font color="yellow"><center>Submit the Context doc first.', unsafe_allow_html=True)
+

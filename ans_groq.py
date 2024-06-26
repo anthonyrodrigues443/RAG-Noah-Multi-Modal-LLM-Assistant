@@ -59,9 +59,6 @@ Answer (remember, ONLY use the provided information):
         model='mixtral-8x7b-32768',
     )
     response = chat_completion.choices[0].message.content
-    print('Input for LLM : ', prompt)
-    print('Output of LLM : ',response)
-
 
     tokens = re.findall(r'\S+|\n|\t', response)
 
