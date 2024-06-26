@@ -243,7 +243,7 @@ if __name__ == '__main__':
         ini = time.time()
         text = speech_to_text(audio_bytes)
         fin = time.time()
-        print('time taken for transcription : ',fin - ini)
+        st.write('time taken for transcription : ',fin - ini)
         if text == None:
             st.sidebar.write('Some error encountered please try again...')
 
