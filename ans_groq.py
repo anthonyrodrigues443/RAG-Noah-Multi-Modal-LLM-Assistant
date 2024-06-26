@@ -10,7 +10,7 @@ GROQ_API_KEY = os.getenv('GROQ_API_KEY')
 GROQ_API_KEY2 = os.getenv('GROQ_API_KEY2')
 
 def Groq_ans(query): #STEP 2 : User prompt response in text
-    client = Groq(api_key=GROQ_API_KEY2)
+    client = Groq(api_key=GROQ_API_KEY)
     chat_completion = client.chat.completions.create(    
         messages=[
             {

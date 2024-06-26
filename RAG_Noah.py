@@ -1,15 +1,14 @@
 import time
-from streamlit_mic_recorder import speech_to_text
-import pyaudio
+initial = time.time()
 import cv2
+import speech_recognition as sr
 import streamlit as st
 import pyttsx3
 from PyPDF2 import PdfReader
 from langchain.text_splitter import CharacterTextSplitter
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
-
-st.set_page_config(page_title='Smart glasses', page_icon=':👓:')
+print('total Time taken for imports : ',time.time()- initial)
 
 @st.cache_data(show_spinner=False)
 def pdf_reader(pdfs):
@@ -38,53 +37,41 @@ def get_text_chunks(text):
 @st.cache_resource(show_spinner=False)
 def get_vectorstore(chunks):
     ini = time.time()
-    embeddings = HuggingFaceEmbeddings(model_name="nomic-ai/nomic-embed-text-v1")
+    embeddings = HuggingFaceEmbeddings(model_name="hkunlp/instructor-xl")
     print('embeddings : ', time.time()-ini)
     ini = time.time()
     vectorstore = FAISS.from_texts(texts=chunks, embedding=embeddings)
     print('vectorstore : ', time.time()-ini)
     return vectorstore
 
-
-def check_audio_device():
-    p = pyaudio.PyAudio()
+def rec_n_ret():    #STEP 1 : User speech to text with mic
+    r = sr.Recognizer()
     try:
-        p.get_default_input_device_info()
-        return True
-    except Exception as ex:
-        print(ex)
-        return False
-    finally:
-        p.terminate()
+        with sr.Microphone() as source2:
+            r.adjust_for_ambient_noise(source2, duration=0.2)
+            temp2 = r.listen(source2)
+            MyText = r.recognize_google(temp2)
+            MyText = MyText.lower()
+            return MyText
+            
+    except sr.RequestError as e:
+        MyText = f"Could not request results; {e}"
+        st.write(MyText+' could you please repeat ?')
+        return None
 
-
-# def speech_to_text():    #STEP 1 : User speech to text with mic
-#     text = speech_to_text()
-#     return text
-    # FILE_URL = 'audiofiles_RAGNoah/input_speech.mp3'
-
-    # with open(FILE_URL, "wb") as f:
-    #     f.write(audio_bytes_)
-
-    # aai.settings.api_key = st.secrets["AAI_API_KEY"]
-
-    # transcriber = aai.Transcriber()
-    # transcript = transcriber.transcribe(FILE_URL)
-
-    # if transcript.status == aai.TranscriptStatus.error:
-    #     return None
-    # else:
-    #     return transcript.text
-
+    except sr.UnknownValueError:
+        MyText = "unknown error occurred"
+        st.write(MyText+' could you please repeat ?')
+        return None
 
 @st.cache_resource(show_spinner=False)
 def get_cap():
-    return cv2.VideoCapture(0)
+    return cv2.VideoCapture(2)
 
 def speak_text(text):
     engine = pyttsx3.init()
     rate = engine.getProperty('rate')
-    engine.setProperty('rate', 120)
+    engine.setProperty('rate', 150)
     voices = engine.getProperty('voices')
     engine.setProperty('voice', voices[1].id)
     engine.say(text)
@@ -98,12 +85,14 @@ def clear_history():
         st.sidebar.markdown('<h1><center>History cleared</center></h1>', 
                             unsafe_allow_html=True)
 
+
+st.set_page_config(page_title='Smart glasses', page_icon=':👓:')
 st.header('RAG Noah :eyeglasses: ')
 
 st.markdown(
     """
     <style>
-    .st-emotion-cache-cnbvxy li{
+    .st-emotion-cache-ul70r3 li{
         font-size: 1.25rem;
     }
     </style>
@@ -166,7 +155,6 @@ st.markdown(
 </style>
 """, unsafe_allow_html=True)
 
-
 user_avatar_path = "imagefiles/user_avatar.png"
 assistant_avatar_path = "imagefiles/assistant_avatar.png"
 
@@ -196,7 +184,6 @@ if __name__ == '__main__':
     if vec_store is not None:
         st.session_state.vec_store = vec_store
     clear_history()
-
     if "messages" not in st.session_state:
         st.session_state.messages = []
     if 'start_func' not in st.session_state:
@@ -212,24 +199,27 @@ if __name__ == '__main__':
         if message['role'] == 'assistant' :
             with st.chat_message(message['role'], avatar=assistant_avatar_path):
                 st.markdown(message['content'])
-    text = None
 
     with st.sidebar:
         c1, c2 = st.columns(2)
+        with c2 :
+            record = st.button('🎙️', help='Audio input')
         with c1 :
             cam = st.button('📸', help='Visual input', on_click=callback)
-        with c2 :
-            text = speech_to_text("🎙️", "🟥", just_once=True)
 
+    print('time for loading entire web page : ', time.time() - initial)
     query = st.chat_input(placeholder='Message Noah')
     import txt_detection
     cap = get_cap()
     import ans_groq
 
+    text = None
 
+    if record:
+        with st.spinner('Listening...'):
+            text = rec_n_ret()
 
     if cam or st.session_state.start_func:
-        # st.write('Working on this feature will be available soon.')
         text = txt_detection.text_extraction(cap)
         st.session_state.start_func = False
         if text == 'No text detected' :
@@ -251,14 +241,17 @@ if __name__ == '__main__':
 
             rel_chunks = ''
             for i in range(len(chunks_)):
-                rel_chunks = rel_chunks + f'Context {i+1}: ' + chunks_[i].page_content
+                rel_chunks = rel_chunks + f'\n\n Context {i+1}: ' + chunks_[i].page_content
 
             st.session_state.messages.append({"role": "user", "content": query})
             file_num = len(st.session_state.messages)
+            context_chunk = st.session_state.messages
+            chat_history = f"This the our conversation so if the user ask something which is incomplete and you can make sense of it from the previous question do answer it correctly. Chat history : {context_chunk}(Also never mention anything about the contexts until the user asks). If the user asks anything irrelevant from the context just answer with not much infomation available. "
             with st.chat_message(name='assistant', avatar=assistant_avatar_path):
-                response = st.write_stream(ans_groq.RAG_Groq_ans(st.session_state.messages, rel_chunks, query))
-                speak_text(response)
+                response = ans_groq.RAG_Groq_ans(chunks=chat_history+rel_chunks, query=query)
+                response_ = st.write_stream(ans_groq.stream_writer(response))
+                speak_text(response_)
+
             st.session_state.messages.append({"role": "assistant", "content": response})
     except Exception as ex:
         st.markdown('<h4><font color="yellow"><center>Submit the Context doc first.', unsafe_allow_html=True)
-
