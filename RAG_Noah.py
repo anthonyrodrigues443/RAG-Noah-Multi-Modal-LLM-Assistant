@@ -239,13 +239,14 @@ if __name__ == '__main__':
     text = None
 
     if audio_bytes:
-        print('\n\nntranscription started')
-        ini = time.time()
-        text = speech_to_text(audio_bytes)
-        fin = time.time()
-        st.write('time taken for transcription : ',fin - ini)
-        if text == None:
-            st.sidebar.write('Some error encountered please try again...')
+        with st.spinner('Transcribing Text'):
+            print('\n\nntranscription started')
+            ini = time.time()
+            text = speech_to_text(audio_bytes)
+            fin = time.time()
+            st.write('time taken for transcription : ',fin - ini)
+            if text == None:
+                st.sidebar.write('Some error encountered please try again...')
 
     if cam or st.session_state.start_func:
         # st.write('Working on this feature will be available soon.')
