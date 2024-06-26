@@ -227,6 +227,7 @@ if __name__ == '__main__':
                 icon_size="2x"
                 )
             if audio_bytes:
+                st.sidebar.write('audio captured')
                 st.sidebar.audio(audio_bytes)
 
     query = st.chat_input(placeholder='Message Noah')
