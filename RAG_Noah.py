@@ -1,6 +1,6 @@
 import time
 initial = time.time()
-import pyaudio
+from streamlit_mic_recorder import speech_to_text
 import cv2
 import streamlit as st
 import pyttsx3
@@ -218,10 +218,10 @@ if __name__ == '__main__':
 
     with st.sidebar:
         c1, c2 = st.columns(2)
-        with c2 :
-            record = st.button('🎙️', help='Audio input')
         with c1 :
             cam = st.button('📸', help='Visual input', on_click=callback)
+        with c2:
+            transcribed_txt = speech_to_text("🎙️", "🟥")
 
     print('time for loading entire web page : ', time.time() - initial)
     query = st.chat_input(placeholder='Message Noah')
@@ -230,10 +230,8 @@ if __name__ == '__main__':
     import ans_groq
 
     text = None
-
-    if record:
-        with st.spinner('Listening...'):
-            text = rec_n_ret()
+    if transcribed_txt :
+        text = transcribed_txt
 
     if cam or st.session_state.start_func:
         text = txt_detection.text_extraction(cap)
