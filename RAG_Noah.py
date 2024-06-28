@@ -9,6 +9,8 @@ from langchain.text_splitter import CharacterTextSplitter
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 import speech_recognition as sr
+from streamlit_TTS import auto_play, text_to_speech, text_to_audio
+
 
 st.set_page_config(page_title='Smart glasses', page_icon=':👓:')
 st.write('total Time taken for imports : ',time.time()- initial)
@@ -262,8 +264,8 @@ if __name__ == '__main__':
                 response = st.write_stream(ans_groq.RAG_Groq_ans(st.session_state.messages, rel_chunks, query))
                 st.markdown('</div>', unsafe_allow_html=True)
 
-                speak_text(response)
-            st.session_state.messages.append({"role": "assistant", "content": response})
+                text_to_speech(text=response)
+                st.session_state.messages.append({"role": "assistant", "content": response})
     except Exception as ex:
         st.write(ex)
         st.markdown('<h4><font color="yellow"><center>Submit the Context doc first.', unsafe_allow_html=True)
