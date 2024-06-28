@@ -1,6 +1,6 @@
 import streamlit as st
 
-@st.cache_resource(show_spinner=False)
+@st.cache_data(show_spinner=False)
 def imports():
     import time
     initial = time.time()
