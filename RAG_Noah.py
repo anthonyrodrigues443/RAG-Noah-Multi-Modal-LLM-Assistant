@@ -1,23 +1,16 @@
-import streamlit as st
-
-@st.cache_data(show_spinner=False)
-def imports():
-    import time
-    initial = time.time()
-    from streamlit_mic_recorder import speech_to_text
-    import cv2
-    import pyttsx3
-    from PyPDF2 import PdfReader
-    from langchain.text_splitter import CharacterTextSplitter
-    from langchain_community.embeddings import HuggingFaceEmbeddings
-    from langchain_community.vectorstores import FAISS
-    import speech_recognition as sr
-    print('total Time taken for imports : ',time.time()- initial)
-    return speech_to_text, cv2, pyttsx3, PdfReader, CharacterTextSplitter, HuggingFaceEmbeddings, FAISS, sr, time
-
-speech_to_text, cv2, pyttsx3, PdfReader, CharacterTextSplitter, HuggingFaceEmbeddings, FAISS, sr, time = imports()
-
+import time
 initial = time.time()
+from streamlit_mic_recorder import speech_to_text
+import cv2
+import streamlit as st
+import pyttsx3
+from PyPDF2 import PdfReader
+from langchain.text_splitter import CharacterTextSplitter
+from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_community.vectorstores import FAISS
+import speech_recognition as sr
+st.write('total Time taken for imports : ',time.time()- initial)
+
 
 st.set_page_config(page_title='Smart glasses', page_icon=':👓:')
 
@@ -49,10 +42,10 @@ def get_text_chunks(text):
 def get_vectorstore(chunks):
     ini = time.time()
     embeddings = HuggingFaceEmbeddings(model_name="nomic-ai/nomic-embed-text-v1", model_kwargs={'trust_remote_code': True})
-    print('embeddings : ', time.time()-ini)
+    st.write('embeddings : ', time.time()-ini)
     ini = time.time()
     vectorstore = FAISS.from_texts(texts=chunks, embedding=embeddings)
-    print('vectorstore : ', time.time()-ini)
+    st.write('vectorstore : ', time.time()-ini)
     return vectorstore
 
 
@@ -190,13 +183,11 @@ def main():
             else : 
                 with st.spinner("Processing"):
                     raw_text, no_of_pgs = pdf_reader(files)
-                    print('PDF Read')
                     text_chunks = get_text_chunks(raw_text)
-                    print('Extracted text chunks')
                     stime = time.time()
                     vector_store = get_vectorstore(text_chunks)
                     etime = time.time()
-                    print('Vectorstore Generated', 'Time taken : ',etime-stime)
+                    st.write('Vectorstore Generated', 'Time taken : ',etime-stime)
                     st.header('Your file has been processed.')
                     return vector_store
 
@@ -231,7 +222,7 @@ if __name__ == '__main__':
             transcribed_txt = speech_to_text("🎙️", "🟥",just_once=True)
 
     query = st.chat_input(placeholder='Message Noah')
-    print('time for loading entire web page : ', time.time() - initial)
+    st.write('time for loading entire web page : ', time.time() - initial)
     import txt_detection
     cap = get_cap()
     import ans_groq
