@@ -186,7 +186,7 @@ def main():
                     stime = time.time()
                     vector_store = get_vectorstore(text_chunks)
                     etime = time.time()
-                    st.write('Vectorstore Generated', 'Time taken : ',etime-stime)
+                    print('Vectorstore Generated', 'Time taken : ',etime-stime)
                     st.header('Your file has been processed.')
                     return vector_store
 
@@ -265,6 +265,6 @@ if __name__ == '__main__':
                 speak_text(response)
             st.session_state.messages.append({"role": "assistant", "content": response})
     except Exception as ex:
-        # st.write(ex)
+        st.write(ex)
         st.markdown('<h4><font color="yellow"><center>Submit the Context doc first.', unsafe_allow_html=True)
 
