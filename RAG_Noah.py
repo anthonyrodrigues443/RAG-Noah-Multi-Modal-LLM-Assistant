@@ -1,16 +1,31 @@
-import time
-initial = time.time()
-from streamlit_mic_recorder import speech_to_text
-import cv2
 import streamlit as st
-import pyttsx3
-from PyPDF2 import PdfReader
-from langchain.text_splitter import CharacterTextSplitter
-from langchain_community.embeddings import HuggingFaceEmbeddings
-from langchain_community.vectorstores import FAISS
-import speech_recognition as sr
-print('total Time taken for imports : ',time.time()- initial)
 
+@st.cache_data(show_spinner=False)
+def imports():
+    global time
+    import time
+    initial = time.time()
+    global speech_to_text
+    from streamlit_mic_recorder import speech_to_text
+    global cv2
+    import cv2
+    global pyttsx3
+    import pyttsx3
+    global PdfReader
+    from PyPDF2 import PdfReader
+    global CharacterTextSplitter
+    from langchain.text_splitter import CharacterTextSplitter
+    global HuggingFaceEmbeddings
+    from langchain_community.embeddings import HuggingFaceEmbeddings
+    global FAISS
+    from langchain_community.vectorstores import FAISS
+    global sr
+    import speech_recognition as sr
+    print('total Time taken for imports : ',time.time()- initial)
+
+
+imports()
+initial = time.time()
 
 st.set_page_config(page_title='Smart glasses', page_icon=':👓:')
 
