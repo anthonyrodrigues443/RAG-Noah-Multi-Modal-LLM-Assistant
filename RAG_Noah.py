@@ -22,9 +22,10 @@ def imports():
     global sr
     import speech_recognition as sr
     print('total Time taken for imports : ',time.time()- initial)
+    return speech_to_text, cv2, pyttsx3, PdfReader, CharacterTextSplitter, HuggingFaceEmbeddings, FAISS, sr, time
 
+speech_to_text, cv2, pyttsx3, PdfReader, CharacterTextSplitter, HuggingFaceEmbeddings, FAISS, sr, time = imports()
 
-imports()
 initial = time.time()
 
 st.set_page_config(page_title='Smart glasses', page_icon=':👓:')
