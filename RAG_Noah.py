@@ -1,17 +1,16 @@
-import streamlit as st
-
-@st.cache_data(show_spinner=False)
 def imports():
     global time
     import time
     initial = time.time()
     global speech_to_text
     from streamlit_mic_recorder import speech_to_text
-    global cv2
+    global
     import cv2
-    global pyttsx3
+    global
+    import streamlit as st
+    global
     import pyttsx3
-    global PdfReader
+    global 
     from PyPDF2 import PdfReader
     global CharacterTextSplitter
     from langchain.text_splitter import CharacterTextSplitter
@@ -22,11 +21,9 @@ def imports():
     global sr
     import speech_recognition as sr
     print('total Time taken for imports : ',time.time()- initial)
-    return speech_to_text, cv2, pyttsx3, PdfReader, CharacterTextSplitter, HuggingFaceEmbeddings, FAISS, sr, time
 
-speech_to_text, cv2, pyttsx3, PdfReader, CharacterTextSplitter, HuggingFaceEmbeddings, FAISS, sr, time = imports()
 
-initial = time.time()
+imports()
 
 st.set_page_config(page_title='Smart glasses', page_icon=':👓:')
 
