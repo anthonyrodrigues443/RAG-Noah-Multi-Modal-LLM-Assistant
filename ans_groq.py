@@ -1,13 +1,11 @@
 from groq import Groq
-from dotenv import load_dotenv
 import time
-import os
+import streamlit as st
 import re
 
-load_dotenv()
 
-GROQ_API_KEY = os.getenv('GROQ_API_KEY')
-GROQ_API_KEY2 = os.getenv('GROQ_API_KEY2')
+GROQ_API_KEY = st.secrets['GROQ_API_KEY']
+GROQ_API_KEY2 = st.secrets['GROQ_API_KEY2']
 
 def Groq_ans(query): #STEP 2 : User prompt response in text
     client = Groq(api_key=GROQ_API_KEY)

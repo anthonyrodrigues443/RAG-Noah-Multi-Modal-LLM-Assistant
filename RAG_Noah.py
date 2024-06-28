@@ -10,7 +10,6 @@ from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 import speech_recognition as sr
 
-
 st.set_page_config(page_title='Smart glasses', page_icon=':👓:')
 st.write('total Time taken for imports : ',time.time()- initial)
 
@@ -42,10 +41,10 @@ def get_text_chunks(text):
 def get_vectorstore(chunks):
     ini = time.time()
     embeddings = HuggingFaceEmbeddings(model_name="nomic-ai/nomic-embed-text-v1", model_kwargs={'trust_remote_code': True})
-    st.write('embeddings : ', time.time()-ini)
+    print('embeddings : ', time.time()-ini)
     ini = time.time()
     vectorstore = FAISS.from_texts(texts=chunks, embedding=embeddings)
-    st.write('vectorstore : ', time.time()-ini)
+    print('vectorstore : ', time.time()-ini)
     return vectorstore
 
 
