@@ -32,7 +32,7 @@ You are an AI assistant with access ONLY to the information provided below. You 
 Chat History:
 {chat_history}
 
-Additional Context:
+Context:
 {context_chunks}
 
 STRICT INSTRUCTIONS:

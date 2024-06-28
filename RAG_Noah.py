@@ -221,10 +221,10 @@ if __name__ == '__main__':
         with c1 :
             cam = st.button('📸', help='Visual input', on_click=callback)
         with c2:
-            transcribed_txt = speech_to_text("🎙️", "🟥")
+            transcribed_txt = speech_to_text("🎙️", "🟥",just_once=True)
 
-    print('time for loading entire web page : ', time.time() - initial)
     query = st.chat_input(placeholder='Message Noah')
+    print('time for loading entire web page : ', time.time() - initial)
     import txt_detection
     cap = get_cap()
     import ans_groq
