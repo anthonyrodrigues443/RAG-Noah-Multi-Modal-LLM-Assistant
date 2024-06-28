@@ -9,10 +9,10 @@ from langchain.text_splitter import CharacterTextSplitter
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 import speech_recognition as sr
-st.write('total Time taken for imports : ',time.time()- initial)
 
 
 st.set_page_config(page_title='Smart glasses', page_icon=':👓:')
+st.write('total Time taken for imports : ',time.time()- initial)
 
 @st.cache_data(show_spinner=False)
 def pdf_reader(pdfs):
