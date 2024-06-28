@@ -9,7 +9,7 @@ from langchain.text_splitter import CharacterTextSplitter
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 import speech_recognition as sr
-
+import subprocess
 
 st.set_page_config(page_title='Smart glasses', page_icon=':👓:')
 st.write('total Time taken for imports : ',time.time()- initial)
@@ -74,15 +74,20 @@ def rec_n_ret():    #STEP 1 : User speech to text with mic
 def get_cap():
     return cv2.VideoCapture(2)
 
+# def speak_text(text):
+#     engine = pyttsx3.init()
+#     rate = engine.getProperty('rate')
+#     engine.setProperty('rate', 120)
+#     voices = engine.getProperty('voices')
+#     engine.setProperty('voice', voices[1].id)
+#     engine.say(text)
+#     engine.runAndWait()
+#     engine.stop()
+
 def speak_text(text):
-    engine = pyttsx3.init()
-    rate = engine.getProperty('rate')
-    engine.setProperty('rate', 120)
-    voices = engine.getProperty('voices')
-    engine.setProperty('voice', voices[1].id)
-    engine.say(text)
-    engine.runAndWait()
-    engine.stop()
+    subprocess.run(['espeak', text])
+
+
 
 def clear_history():
     clear_hist = st.sidebar.button('Clear history', use_container_width=True, type='primary')
