@@ -9,7 +9,8 @@ from langchain.text_splitter import CharacterTextSplitter
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 import speech_recognition as sr
-import subprocess
+from gtts import gTTS
+import pygame
 
 st.set_page_config(page_title='Smart glasses', page_icon=':👓:')
 st.write('total Time taken for imports : ',time.time()- initial)
@@ -74,19 +75,23 @@ def rec_n_ret():    #STEP 1 : User speech to text with mic
 def get_cap():
     return cv2.VideoCapture(2)
 
-# def speak_text(text):
-#     engine = pyttsx3.init()
-#     rate = engine.getProperty('rate')
-#     engine.setProperty('rate', 120)
-#     voices = engine.getProperty('voices')
-#     engine.setProperty('voice', voices[1].id)
-#     engine.say(text)
-#     engine.runAndWait()
-#     engine.stop()
+@st.cache_data
+def init_tts():
+    pygame.mixer.init()    
 
-def speak_text(text):
-    subprocess.run(['espeak', text])
-
+def text_to_speech(response, file_num): #, word_num):
+    ini = time.time()
+    pygame.mixer.init()
+    audio_filepath = f'audiofiles_RAGNoah/response{file_num}.mp3' #_{word_num}'
+    tts = gTTS(text='''Based on the information provided, I don't have enough knowledge to answer the question "what is HTML" as the context only includes information about the MHT CET (PCM Group) 2024 Score Card and normalization. HTML (HyperText Markup Language) is a standard markup language used to create web pages and applications. It provides a standard way to structure and format content on the web.''')
+    tts.save(audio_filepath)
+    pygame.mixer.music.load(audio_filepath)
+    print('time for creating entire audio ', time.time() - ini)
+    pygame.mixer.music.play()
+    while pygame.mixer.music.get_busy():
+        pygame.time.Clock().tick(10)
+    pygame.mixer.music.stop()
+    pygame.mixer.quit()
 
 
 def clear_history():
@@ -268,7 +273,7 @@ if __name__ == '__main__':
                 response = st.write_stream(ans_groq.RAG_Groq_ans(st.session_state.messages, rel_chunks, query))
                 st.markdown('</div>', unsafe_allow_html=True)
 
-                speak_text(response)
+                text_to_speech(response, file_num)
             st.session_state.messages.append({"role": "assistant", "content": response})
     except Exception as ex:
         st.write(ex)
