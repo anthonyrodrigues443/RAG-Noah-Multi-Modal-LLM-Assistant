@@ -27,7 +27,7 @@ st.sidebar.markdown(
 git = st.sidebar.link_button('Github', 'https://github.com/Sharkytony', type='primary', use_container_width=True)
 
 
-st.sidebar.link_button('LinkedIn', 'https://www.linkedin.com/in/anthony-rodrigues-7a112527a/', type='primary', use_container_width=True)
+st.sidebar.link_button('LinkedIn', 'www.linkedin.com/in/anthonyrodrigues443', type='primary', use_container_width=True)
 
 
 # import cv2
