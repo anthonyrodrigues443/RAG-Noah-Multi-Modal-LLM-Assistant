@@ -113,7 +113,7 @@ def clear_history():
         st.sidebar.markdown('<h1><center>History cleared</center></h1>', 
                             unsafe_allow_html=True)
 
-st.header('RAG Noah :eyeglasses: ')
+st.header("RAG Noah :eyeglasses: (Chat with PDF's :books:) ")
 
 st.markdown(
     """
@@ -297,4 +297,4 @@ if __name__ == '__main__':
             st.session_state.messages.append({"role": "assistant", "content": response})
     except Exception as ex:
         # st.write(ex)
-        st.markdown('<h4><font color="yellow"><center>Submit the Context doc first.', unsafe_allow_html=True)
+        st.markdown('<h4><font color="yellow"><center>Oops! We need some PDFs as Context.', unsafe_allow_html=True)
