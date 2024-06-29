@@ -1,5 +1,6 @@
 import time
 initial = time.time()
+import base64
 from streamlit_mic_recorder import speech_to_text
 import cv2
 import streamlit as st
@@ -10,7 +11,7 @@ from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 import speech_recognition as sr
 from gtts import gTTS
-import pygame
+import io
 
 st.set_page_config(page_title='Smart glasses', page_icon=':👓:')
 st.write('total Time taken for imports : ',time.time()- initial)
@@ -70,29 +71,40 @@ def rec_n_ret():    #STEP 1 : User speech to text with mic
         st.write(MyText+' could you please repeat ?')
         return None
 
-
 @st.cache_resource(show_spinner=False)
 def get_cap():
     return cv2.VideoCapture(2)
 
-@st.cache_data
-def init_tts():
-    pygame.mixer.init()    
+def text_to_speech(text):
+    tts = gTTS(text=text, lang='en', slow=False)
+    fp = io.BytesIO()
+    tts.write_to_fp(fp)
+    fp.seek(0)
+    return fp.read()
 
-def text_to_speech(response, file_num): #, word_num):
-    ini = time.time()
-    pygame.mixer.init()
-    audio_filepath = f'audiofiles_RAGNoah/response{file_num}.mp3' #_{word_num}'
-    tts = gTTS(text='''Based on the information provided, I don't have enough knowledge to answer the question "what is HTML" as the context only includes information about the MHT CET (PCM Group) 2024 Score Card and normalization. HTML (HyperText Markup Language) is a standard markup language used to create web pages and applications. It provides a standard way to structure and format content on the web.''')
-    tts.save(audio_filepath)
-    pygame.mixer.music.load(audio_filepath)
-    print('time for creating entire audio ', time.time() - ini)
-    pygame.mixer.music.play()
-    while pygame.mixer.music.get_busy():
-        pygame.time.Clock().tick(10)
-    pygame.mixer.music.stop()
-    pygame.mixer.quit()
+# def autoplay_tts(audio_bytes, autoplay=True):
+#     b64 = base64.b64encode(audio_bytes).decode()
+#     md = f"""
+#         <audio id="audioTag" controls autoplay>
+#         <source src="data:audio/mp3;base64,{b64}"  type="audio/mpeg" format="audio/mpeg">
+#         </audio>
+#             """
+#     st.markdown(
+#         md,
+#         unsafe_allow_html=True
+#     )
 
+def autoplay_tts(audio_bytes, autoplay=True):
+    if st.session_state.current_audio:
+        st.session_state.current_audio.empty()
+    b64 = base64.b64encode(audio_bytes).decode()
+    md = f"""
+        <audio autoplay={autoplay} class="stAudio">
+        <source src="data:audio/mp3;base64,{b64}" type="audio/mp3" format="audio/mpeg">
+        </audio>
+        """
+    st.session_state.current_audio = st.markdown(md, unsafe_allow_html=True)
+    return st.session_state.current_audio
 
 def clear_history():
     clear_hist = st.sidebar.button('Clear history', use_container_width=True, type='primary')
@@ -142,6 +154,7 @@ st.markdown(
     </style>
     """, unsafe_allow_html=True
 )
+
 
 #user text styling
 st.markdown(
@@ -207,6 +220,8 @@ if __name__ == '__main__':
         st.session_state.vec_store = vec_store
     clear_history()
 
+    if 'current_audio' not in st.session_state:
+        st.session_state.current_audio = None
     if "messages" not in st.session_state:
         st.session_state.messages = []
     if 'start_func' not in st.session_state:
@@ -255,6 +270,11 @@ if __name__ == '__main__':
     try:
         formatted_query = ''
         if query:
+            if st.session_state.current_audio:
+                st.session_state.current_audio.empty()
+                st.session_state.current_audio = None
+
+            #i want to stop the text to speech here
             formatted_query = query.replace('\n', '\n\n')
             with st.chat_message('user', avatar=user_avatar_path):
                 st.markdown(formatted_query)
@@ -272,10 +292,9 @@ if __name__ == '__main__':
                 st.markdown('<div class="monospace">', unsafe_allow_html=True)
                 response = st.write_stream(ans_groq.RAG_Groq_ans(st.session_state.messages, rel_chunks, query))
                 st.markdown('</div>', unsafe_allow_html=True)
-
-                text_to_speech(response, file_num)
+                audio_bytes = text_to_speech(response)
+                autoplay_tts(audio_bytes, autoplay=True)
             st.session_state.messages.append({"role": "assistant", "content": response})
     except Exception as ex:
         st.write(ex)
         st.markdown('<h4><font color="yellow"><center>Submit the Context doc first.', unsafe_allow_html=True)
-
