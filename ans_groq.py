@@ -4,11 +4,12 @@ import streamlit as st
 import re
 
 
-GROQ_API_KEY = st.secrets['GROQ_API_KEY']
-GROQ_API_KEY2 = st.secrets['GROQ_API_KEY2']
+GROQ_API_KEYS = [st.secrets['GROQ_API_KEY1'], st.secrets['GROQ_API_KEY2'],
+                 st.secrets['GROQ_API_KEY3'], st.secrets['GROQ_API_KEY4'],
+                 st.secrets['GROQ_API_KEY5']]
 
 def Groq_ans(query): #STEP 2 : User prompt response in text
-    client = Groq(api_key=GROQ_API_KEY)
+    client = Groq(api_key=GROQ_API_KEYS[0])
     chat_completion = client.chat.completions.create(    
         messages=[
             {
@@ -22,8 +23,8 @@ def Groq_ans(query): #STEP 2 : User prompt response in text
     return response
 
 
-def RAG_Groq_ans(chat_history, context_chunks, query): #STEP 2 : User prompt response in text
-    client = Groq(api_key=GROQ_API_KEY2)
+def RAG_Groq_ans(chat_history, context_chunks, query, query_num): #STEP 2 : User prompt response in text
+    client = Groq(api_key=GROQ_API_KEYS[query_num])
     prompt = f"""
 You are an AI assistant with access ONLY to the information provided below. You MUST NOT use any external knowledge.
 
@@ -33,7 +34,7 @@ Chat History:
 Context:
 {context_chunks}
 
-STRICT INSTRUCTIONS:
+STRICT CRUCIAL INSTRUCTIONS:
 1. ONLY use the information from the Chat History and Additional Context to answer the question.
 2. If the question CANNOT be answered using ONLY the provided information, your response MUST be:
    "I don't have enough information in the given context to answer this question."

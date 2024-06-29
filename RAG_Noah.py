@@ -146,14 +146,14 @@ st.markdown(
     """, unsafe_allow_html=True
 )
 
-st.markdown(
-    """
-    <style>
-    [data-testid="chatAvatarIcon-user"] 
-    <img src="https://i.ibb.co/cN0nmSj/Screenshot-2023-05-28-at-02-37-21.png">
-    </style>
-    """, unsafe_allow_html=True
-)
+st.markdown('''
+<style>
+button.myButton{
+    font-size:200px !important;
+    }
+</style>
+    ''',
+    unsafe_allow_html=True)
 
 
 #user text styling
@@ -219,7 +219,7 @@ if __name__ == '__main__':
     if vec_store is not None:
         st.session_state.vec_store = vec_store
     clear_history()
-
+    query_number = 0
     if 'current_audio' not in st.session_state:
         st.session_state.current_audio = None
     if "messages" not in st.session_state:
@@ -287,10 +287,10 @@ if __name__ == '__main__':
                 rel_chunks = rel_chunks + f'Context {i+1}: ' + chunks_[i].page_content
 
             st.session_state.messages.append({"role": "user", "content": query})
-            file_num = len(st.session_state.messages)
+            query_number +=1
             with st.chat_message(name='assistant', avatar=assistant_avatar_path):
                 st.markdown('<div class="monospace">', unsafe_allow_html=True)
-                response = st.write_stream(ans_groq.RAG_Groq_ans(st.session_state.messages, rel_chunks, query))
+                response = st.write_stream(ans_groq.RAG_Groq_ans(st.session_state.messages, rel_chunks, query, query_number))
                 st.markdown('</div>', unsafe_allow_html=True)
                 audio_bytes = text_to_speech(response)
                 autoplay_tts(audio_bytes, autoplay=True)
