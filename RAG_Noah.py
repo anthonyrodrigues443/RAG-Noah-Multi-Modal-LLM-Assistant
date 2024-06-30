@@ -113,7 +113,7 @@ def clear_history():
         st.sidebar.markdown('<h1><center>History cleared</center></h1>', 
                             unsafe_allow_html=True)
 
-st.header("RAG Noah :eyeglasses: (Chat with PDF's :books:) ")
+st.header("RAG Noah :eyeglasses: (Chat with PDF's :books:) ", anchor=False)
 
 st.markdown(
     """
@@ -211,7 +211,7 @@ def main():
                     vector_store = get_vectorstore(text_chunks)
                     etime = time.time()
                     print('Vectorstore Generated', 'Time taken : ',etime-stime)
-                    st.header('Your file has been processed.')
+                    st.header('Your file has been processed.',anchor=False)
                     return vector_store
 
 if __name__ == '__main__':
@@ -274,7 +274,6 @@ if __name__ == '__main__':
                 st.session_state.current_audio.empty()
                 st.session_state.current_audio = None
 
-            #i want to stop the text to speech here
             formatted_query = query.replace('\n', '\n\n')
             with st.chat_message('user', avatar=user_avatar_path):
                 st.markdown(formatted_query)
