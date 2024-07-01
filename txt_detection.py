@@ -2,7 +2,6 @@ import easyocr
 import cv2
 import textwrap
 import streamlit as st
-from camera_input_live import camera_input_live
 
 @st.cache_resource(show_spinner=False)
 def load_reader():
@@ -89,3 +88,14 @@ def text_extraction(cap):
     st.session_state.prompt = None
     return prompt
 
+
+
+# import streamlit as st
+# import streamlit.components.v1 as components
+
+# # Load the HTML file
+# with open("webcam_component.html", "r") as f:
+#     webcam_html = f.read()
+
+# # Use the HTML component
+# components.html(webcam_html, height=600)

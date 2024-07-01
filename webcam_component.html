@@ -1,0 +1,18 @@
+<div>
+    <video id="video" width="640" height="480" autoplay></video>
+    <button id="start">Start Webcam</button>
+</div>
+
+<script>
+    const video = document.getElementById('video');
+    const startButton = document.getElementById('start');
+
+    startButton.addEventListener('click', async () => {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            video.srcObject = stream;
+        } catch (err) {
+            console.error("Error accessing the webcam:", err);
+        }
+    });
+</script>
