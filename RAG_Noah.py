@@ -82,18 +82,6 @@ def text_to_speech(text):
     fp.seek(0)
     return fp.read()
 
-# def autoplay_tts(audio_bytes, autoplay=True):
-#     b64 = base64.b64encode(audio_bytes).decode()
-#     md = f"""
-#         <audio id="audioTag" controls autoplay>
-#         <source src="data:audio/mp3;base64,{b64}"  type="audio/mpeg" format="audio/mpeg">
-#         </audio>
-#             """
-#     st.markdown(
-#         md,
-#         unsafe_allow_html=True
-#     )
-
 def autoplay_tts(audio_bytes, autoplay=True):
     if st.session_state.current_audio:
         st.session_state.current_audio.empty()
@@ -119,7 +107,7 @@ st.markdown(
     """
     <style>
     .st-emotion-cache-cnbvxy li{
-        font-size: 1.25rem;
+        font-size: 10px;
     }
     </style>
     """, unsafe_allow_html=True
@@ -138,7 +126,7 @@ st.markdown(
     """
     <style>
     [data-testid="stChatMessageContent"] * {
-        font-size: 1.25rem;
+        font-size: 10px;
         padding: 1px;
         margin: 0px;
     }
