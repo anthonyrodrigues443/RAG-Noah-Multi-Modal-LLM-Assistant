@@ -1,18 +1,116 @@
-<div>
-    <video id="video" width="640" height="480" autoplay></video>
-    <button id="start">Start Webcam</button>
-</div>
-
-<script>
-    const video = document.getElementById('video');
-    const startButton = document.getElementById('start');
-
-    startButton.addEventListener('click', async () => {
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-            video.srcObject = stream;
-        } catch (err) {
-            console.error("Error accessing the webcam:", err);
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webcam Component</title>
+    <style>
+        #webcam-container {
+            margin-top: 20px;
         }
-    });
-</script>
+        #start-button, #snap-button {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="webcam-container">
+        <video id="webcam" autoplay playsinline width="640" height="480">
+        </video>
+    </div>
+    <div>
+        <button id="start-button">📸</button>
+        <button id="snap-button" disabled>Capture</button>
+    </div>
+    <canvas id="canvas" style="display:none;"></canvas>
+    <div id="photo-container"></div>
+
+    <script>
+        class Webcam {
+            constructor(webcamElement, facingMode = "user", canvasElement = null) {
+                this._webcamElement = webcamElement;
+                this._facingMode = facingMode;
+                this._webcamList = [];
+                this._streamList = [];
+                this._selectedDeviceId = "";
+                this._canvasElement = canvasElement;
+            }
+
+            async start() {
+                return new Promise((resolve, reject) => {
+                    this.stop();
+                    navigator.mediaDevices.getUserMedia(this._getMediaConstraints())
+                        .then(stream => {
+                            this._streamList.push(stream);
+                            this._webcamElement.srcObject = stream;
+                            this._webcamElement.play();
+                            resolve();
+                        })
+                        .catch(error => {
+                            reject(error);
+                        });
+                });
+            }
+
+            stop() {
+                this._streamList.forEach(stream => {
+                    stream.getTracks().forEach(track => {
+                        track.stop();
+                    });
+                });
+            }
+
+            snap() {
+                if (this._canvasElement != null) {
+                    this._canvasElement.height = this._webcamElement.scrollHeight;
+                    this._canvasElement.width = this._webcamElement.scrollWidth;
+                    let context = this._canvasElement.getContext('2d');
+                    context.drawImage(this._webcamElement, 0, 0, this._canvasElement.width, this._canvasElement.height);
+                    let data = this._canvasElement.toDataURL('image/png');
+                    return data;
+                } else {
+                    throw "Canvas element is missing";
+                }
+            }
+
+            _getMediaConstraints() {
+                var constraints = {
+                    video: {
+                        facingMode: this._facingMode
+                    },
+                    audio: false
+                };
+                return constraints;
+            }
+        }
+
+        // Usage of the Webcam class
+        const webcamElement = document.getElementById('webcam');
+        const canvasElement = document.getElementById('canvas');
+        const webcam = new Webcam(webcamElement, 'user', canvasElement);
+        const startButton = document.getElementById('start-button');
+        const snapButton = document.getElementById('snap-button');
+        const photoContainer = document.getElementById('photo-container');
+
+        startButton.addEventListener('click', () => {
+            webcam.start()
+                .then(result => {
+                    console.log("webcam started");
+                    snapButton.disabled = false;
+                })
+                .catch(err => {
+                    console.error(err);
+                });
+        });
+
+        snapButton.addEventListener('click', () => {
+            let picture = webcam.snap();
+            const img = document.createElement('img');
+            img.src = picture;
+            img.style.width = '320px';
+            photoContainer.innerHTML = '';
+            photoContainer.appendChild(img);
+        });
+    </script>
+</body>
+</html>

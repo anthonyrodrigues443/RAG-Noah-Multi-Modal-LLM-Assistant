@@ -107,7 +107,7 @@ st.markdown(
     """
     <style>
     .st-emotion-cache-cnbvxy li{
-        font-size: 10px;
+        font-size: 1.1rem;
     }
     </style>
     """, unsafe_allow_html=True
@@ -126,7 +126,7 @@ st.markdown(
     """
     <style>
     [data-testid="stChatMessageContent"] * {
-        font-size: 10px;
+        font-size: 1.1rempx;
         padding: 1px;
         margin: 0px;
     }

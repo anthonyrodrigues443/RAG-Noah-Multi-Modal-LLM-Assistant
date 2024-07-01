@@ -88,14 +88,3 @@ def text_extraction(cap):
     st.session_state.prompt = None
     return prompt
 
-
-
-# import streamlit as st
-# import streamlit.components.v1 as components
-
-# # Load the HTML file
-# with open("webcam_component.html", "r") as f:
-#     webcam_html = f.read()
-
-# # Use the HTML component
-# components.html(webcam_html, height=600)
