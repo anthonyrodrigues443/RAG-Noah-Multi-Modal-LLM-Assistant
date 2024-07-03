@@ -1,57 +1,186 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Webcam Component</title>
     <style>
-        #webcam-container {
-            margin-top: 20px;
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
-        #start-button, #snap-button {
-            margin-top: 10px;
+        #webcam, #canvas {
+            margin-bottom: 20px;
+        }
+        button {
+            margin: 5px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        #snapshot {
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
-    <div id="webcam-container">
-        <video id="webcam" autoplay playsinline width="640" height="480">
-        </video>
-    </div>
+    <video id="webcam" autoplay playsinline width="640" height="480" style="display:none;"></video>
+    <canvas id="canvas" width="640" height="480"></canvas>
     <div>
-        <button id="start-button">📸</button>
-        <button id="snap-button" disabled>Capture</button>
+        <button id="startBtn">Start</button>
+        <button id="stopBtn">Stop</button>
+        <button id="snapBtn">Snap</button>
+        <button id="flipBtn">Flip Camera</button>
     </div>
-    <canvas id="canvas" style="display:none;"></canvas>
-    <div id="photo-container"></div>
-
+    <img id="snapshot" style="display:none;" alt="Snapshot">
     <script>
         class Webcam {
-            constructor(webcamElement, facingMode = "user", canvasElement = null) {
+            constructor(webcamElement, facingMode = "user", canvasElement = null, snapSoundElement = null) {
                 this._webcamElement = webcamElement;
+                this._webcamElement.width = this._webcamElement.width || 640;
+                this._webcamElement.height = this._webcamElement.height || 360;
                 this._facingMode = facingMode;
                 this._webcamList = [];
                 this._streamList = [];
                 this._selectedDeviceId = "";
                 this._canvasElement = canvasElement;
+                this._snapSoundElement = snapSoundElement;
+                this._context = this._canvasElement.getContext('2d');
             }
 
-            async start() {
+            // Getter and setter for facing mode
+            get facingMode() {
+                return this._facingMode;
+            }
+
+            set facingMode(value) {
+                this._facingMode = value;
+            }
+
+            // Getter for webcam list
+            get webcamList() {
+                return this._webcamList;
+            }
+
+            // Getter for webcam count
+            get webcamCount() {
+                return this._webcamList.length;
+            }
+
+            // Getter for selected device ID
+            get selectedDeviceId() {
+                return this._selectedDeviceId;
+            }
+
+            // Get video input devices
+            getVideoInputs(mediaDevices) {
+                this._webcamList = [];
+                mediaDevices.forEach(mediaDevice => {
+                    if (mediaDevice.kind === "videoinput") {
+                        this._webcamList.push(mediaDevice);
+                    }
+                });
+                if (this._webcamList.length == 1) {
+                    this._facingMode = "user";
+                }
+                return this._webcamList;
+            }
+
+            // Get media constraints for the video stream
+            getMediaConstraints() {
+                var videoConstraints = {};
+                if (this._selectedDeviceId == "") {
+                    videoConstraints.facingMode = this._facingMode;
+                } else {
+                    videoConstraints.deviceId = { exact: this._selectedDeviceId };
+                }
+                videoConstraints.width = { exact: this._webcamElement.width };
+                videoConstraints.height = { exact: this._webcamElement.height };
+                var constraints = {
+                    video: videoConstraints,
+                    audio: false
+                };
+                return constraints;
+            }
+
+            // Select camera based on facing mode
+            selectCamera() {
+                for (let webcam of this._webcamList) {
+                    if ((this._facingMode == "user" && webcam.label.toLowerCase().includes("front")) ||
+                        (this._facingMode == "environment" && webcam.label.toLowerCase().includes("back"))) {
+                        this._selectedDeviceId = webcam.deviceId;
+                        break;
+                    }
+                }
+            }
+
+            // Flip the camera
+            flip() {
+                this._facingMode = (this._facingMode == "user") ? "environment" : "user";
+                this._webcamElement.style.transform = "";
+                this.selectCamera();
+            }
+
+            // Start the webcam stream
+            async start(startStream = true) {
                 return new Promise((resolve, reject) => {
                     this.stop();
-                    navigator.mediaDevices.getUserMedia(this._getMediaConstraints())
-                        .then(stream => {
-                            this._streamList.push(stream);
-                            this._webcamElement.srcObject = stream;
-                            this._webcamElement.play();
-                            resolve();
-                        })
-                        .catch(error => {
+                    navigator.mediaDevices.getUserMedia(this.getMediaConstraints()).then(stream => {
+                        this._streamList.push(stream);
+                        this.info().then(webcams => {
+                            this.selectCamera();
+                            if (startStream) {
+                                this.stream().then(facingMode => {
+                                    resolve(this._facingMode);
+                                    this.updateCanvas();
+                                }).catch(error => {
+                                    reject(error);
+                                });
+                            } else {
+                                resolve(this._selectedDeviceId);
+                            }
+                        }).catch(error => {
                             reject(error);
                         });
+                    }).catch(error => {
+                        reject(error);
+                    });
                 });
             }
 
+            // Get webcam information
+            async info() {
+                return new Promise((resolve, reject) => {
+                    navigator.mediaDevices.enumerateDevices().then(devices => {
+                        this.getVideoInputs(devices);
+                        resolve(this._webcamList);
+                    }).catch(error => {
+                        reject(error);
+                    });
+                });
+            }
+
+            // Start streaming from the webcam
+            async stream() {
+                return new Promise((resolve, reject) => {
+                    navigator.mediaDevices.getUserMedia(this.getMediaConstraints()).then(stream => {
+                        this._streamList.push(stream);
+                        this._webcamElement.srcObject = stream;
+                        if (this._facingMode == "user") {
+                            this._webcamElement.style.transform = "scale(-1,1)";
+                        }
+                        this._webcamElement.play();
+                        resolve(this._facingMode);
+                    }).catch(error => {
+                        console.log(error);
+                        reject(error);
+                    });
+                });
+            }
+
+            // Stop all webcam streams
             stop() {
                 this._streamList.forEach(stream => {
                     stream.getTracks().forEach(track => {
@@ -60,57 +189,224 @@
                 });
             }
 
+            // Take a snapshot from the webcam
             snap() {
                 if (this._canvasElement != null) {
+                    if (this._snapSoundElement != null) {
+                        this._snapSoundElement.play();
+                    }
                     this._canvasElement.height = this._webcamElement.scrollHeight;
                     this._canvasElement.width = this._webcamElement.scrollWidth;
                     let context = this._canvasElement.getContext('2d');
+                    if (this._facingMode == "user") {
+                        context.translate(this._canvasElement.width, 0);
+                        context.scale(-1, 1);
+                    }
+                    context.clearRect(0, 0, this._canvasElement.width, this._canvasElement.height);
                     context.drawImage(this._webcamElement, 0, 0, this._canvasElement.width, this._canvasElement.height);
                     let data = this._canvasElement.toDataURL('image/png');
                     return data;
                 } else {
-                    throw "Canvas element is missing";
+                    throw "canvas element is missing";
                 }
             }
 
-            _getMediaConstraints() {
-                var constraints = {
-                    video: {
-                        facingMode: this._facingMode
-                    },
-                    audio: false
-                };
-                return constraints;
+            // Update canvas with video feed and draw lines
+            updateCanvas() {
+                if (this._webcamElement.paused || this._webcamElement.ended) {
+                    return;
+                }
+                this._context.drawImage(this._webcamElement, 0, 0, this._canvasElement.width, this._canvasElement.height);
+                this.drawLines();
+                requestAnimationFrame(() => this.updateCanvas());
+            }
+
+            // Draw lines on the canvas
+            drawLines() {
+                this._context.beginPath();
+                this._context.moveTo(0, 0);
+                this._context.lineTo(this._canvasElement.width, this._canvasElement.height);
+                this._context.moveTo(this._canvasElement.width, 0);
+                this._context.lineTo(0, this._canvasElement.height);
+                this._context.strokeStyle = 'red';
+                this._context.lineWidth = 5;
+                this._context.stroke();
             }
         }
 
-        // Usage of the Webcam class
+        // Initialize the Webcam
         const webcamElement = document.getElementById('webcam');
         const canvasElement = document.getElementById('canvas');
         const webcam = new Webcam(webcamElement, 'user', canvasElement);
-        const startButton = document.getElementById('start-button');
-        const snapButton = document.getElementById('snap-button');
-        const photoContainer = document.getElementById('photo-container');
 
-        startButton.addEventListener('click', () => {
-            webcam.start()
-                .then(result => {
-                    console.log("webcam started");
-                    snapButton.disabled = false;
-                })
-                .catch(err => {
-                    console.error(err);
-                });
+        // Button event listeners
+        document.getElementById('startBtn').addEventListener('click', () => {
+            webcam.start();
         });
 
-        snapButton.addEventListener('click', () => {
-            let picture = webcam.snap();
-            const img = document.createElement('img');
-            img.src = picture;
-            img.style.width = '320px';
-            photoContainer.innerHTML = '';
-            photoContainer.appendChild(img);
+        document.getElementById('stopBtn').addEventListener('click', () => {
+            webcam.stop();
         });
+
+        document.getElementById('snapBtn').addEventListener('click', () => {
+            const picture = webcam.snap();
+            document.getElementById('snapshot').src = picture;
+            document.getElementById('snapshot').style.display = 'block';
+        });
+
+        document.getElementById('flipBtn').addEventListener('click', () => {
+            webcam.flip();
+            webcam.start();
+        });
+    </script>
+</body>
+</html> -->
+
+<!-- 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webcam Capture</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+        video, img {
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .buttons {
+            margin-top: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 0 10px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #ddd;
+        }
+        button:active {
+            background-color: #ccc;
+        }
+    </style>
+</head>
+<body>
+    <h1>Webcam Capture</h1>
+    <div class="buttons">
+        <button id="startButton">Start</button>
+        <button id="stopButton">Stop</button>
+        <button id="captureButton">Capture</button>
+    </div>
+    <video id="webcam" autoplay playsinline width="640" height="480"></video>
+    <img id="capturedImage" width="640" height="480">
+
+    <script>
+        const startButton = document.getElementById('startButton');
+        const stopButton = document.getElementById('stopButton');
+        const captureButton = document.getElementById('captureButton');
+        const webcam = document.getElementById('webcam');
+        const capturedImage = document.getElementById('capturedImage');
+
+        let stream;
+
+        startButton.addEventListener('click', async () => {
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                webcam.srcObject = stream;
+            } catch (err) {
+                console.error('Error accessing webcam: ', err);
+            }
+        });
+
+        stopButton.addEventListener('click', () => {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                webcam.srcObject = null;
+            }
+        });
+
+        captureButton.addEventListener('click', () => {
+            if (webcam.srcObject) {
+                const canvas = document.createElement('canvas');
+                canvas.width = webcam.videoWidth;
+                canvas.height = webcam.videoHeight;
+                const context = canvas.getContext('2d');
+                context.drawImage(webcam, 0, 0, canvas.width, canvas.height);
+                capturedImage.src = canvas.toDataURL('image/png');
+            }
+        });
+    </script>
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webcam Component</title>
+</head>
+<body>
+    <video id="video" style="display: none;"></video>
+    <canvas id="canvas" style="display: none;"></canvas>
+
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        let ws;
+
+        async function setupWebcam() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                video.srcObject = stream;
+                video.play();
+                video.onloadedmetadata = () => {
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    connectWebSocket();
+                };
+            } catch (error) {
+                console.error('Error accessing webcam:', error);
+            }
+        }
+
+        function connectWebSocket() {
+            ws = new WebSocket('ws://localhost:8501/ws');
+            ws.onopen = () => {
+                console.log('WebSocket connected');
+                sendFrame();
+            };
+            ws.onclose = () => {
+                console.log('WebSocket disconnected');
+                setTimeout(connectWebSocket, 1000);
+            };
+        }
+
+        function sendFrame() {
+            if (ws.readyState === WebSocket.OPEN) {
+                ctx.drawImage(video, 0, 0);
+                const imageData = canvas.toDataURL('image/jpeg', 0.8);
+                ws.send(imageData);
+            }
+            requestAnimationFrame(sendFrame);
+        }
+
+        setupWebcam();
     </script>
 </body>
 </html>

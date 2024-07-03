@@ -23,7 +23,9 @@ def Groq_ans(query): #STEP 2 : User prompt response in text
     return response
 
 
-def RAG_Groq_ans(chat_history, context_chunks, query, query_num): #STEP 2 : User prompt response in text
+def RAG_Groq_ans(chat_history, context_chunks, query, query_num): #STEP 2 :User prompt response in text
+    query_num = query_num%5
+
     client = Groq(api_key=GROQ_API_KEYS[query_num])
     prompt = f"""
 You are an AI assistant with access ONLY to the information provided below. You MUST NOT use any external knowledge.

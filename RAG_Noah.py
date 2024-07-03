@@ -126,7 +126,7 @@ st.markdown(
     """
     <style>
     [data-testid="stChatMessageContent"] * {
-        font-size: 1.1rempx;
+        font-size: 1.1rem;
         padding: 1px;
         margin: 0px;
     }
