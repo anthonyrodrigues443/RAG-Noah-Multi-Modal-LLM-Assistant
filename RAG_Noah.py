@@ -12,9 +12,10 @@ from langchain_community.vectorstores import FAISS
 import speech_recognition as sr
 from gtts import gTTS
 import io
+print('total Time taken for imports : ',time.time()- initial)
+
 
 st.set_page_config(page_title='Smart glasses', page_icon=':👓:')
-# st.write('total Time taken for imports : ',time.time()- initial)
 
 @st.cache_data(show_spinner=False)
 def pdf_reader(pdfs):
@@ -235,7 +236,7 @@ if __name__ == '__main__':
             transcribed_txt = speech_to_text("🎙️", "🟥",just_once=True)
 
     query = st.chat_input(placeholder='Message Noah')
-    # st.write('time for loading entire web page : ', time.time() - initial)
+    print('time for loading entire web page : ', time.time() - initial)
     import txt_detection
     cap = get_cap()
     import ans_groq

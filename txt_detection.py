@@ -36,12 +36,15 @@ def text_extraction(cap):
         capture = False
         st.session_state.process_button_pressed = False
 
-    while True:
+    while cap.isOpened():
         if process_button_pressed:
             break
-        frame = cap
+        success, frame = cap.read()
         window_width = frame.shape[1]
         window_height = frame.shape[0]
+        if not success:
+            print("Failed to capture frame")
+            continue
 
         # Draw a semi-transparent overlay with a transparent rectangle in the middle
         overlay = frame.copy()
@@ -84,23 +87,3 @@ def text_extraction(cap):
     prompt = st.session_state.prompt
     st.session_state.prompt = None
     return prompt
-
-
-# import streamlit as st
-# import streamlit.components.v1 as components
-
-# # Set page title
-# st.set_page_config(page_title="Webcam Component")
-
-# # Add a title to your Streamlit app
-# st.title("Webcam Component Demo")
-
-# # Read the HTML file
-# with open('webcam_component.html', 'r') as f:
-#     webcam_comp = f.read()
-
-# # Render the HTML component
-# components.html(webcam_comp, height=1000)
-
-# # Add some instructions
-# st.write("Use the buttons above to control the webcam and capture frames.")
