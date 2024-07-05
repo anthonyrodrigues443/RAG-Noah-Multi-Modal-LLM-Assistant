@@ -237,9 +237,11 @@ if __name__ == '__main__':
 
     query = st.chat_input(placeholder='Message Noah')
     print('time for loading entire web page : ', time.time() - initial)
+    ini = time.time()
     import txt_detection
     cap = get_cap()
     import ans_groq
+    print('cv loading time : ', time.time()- ini)
 
     text = None
     if transcribed_txt :
