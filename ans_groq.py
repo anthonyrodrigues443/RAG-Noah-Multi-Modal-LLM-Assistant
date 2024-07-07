@@ -8,13 +8,73 @@ GROQ_API_KEYS = [st.secrets['GROQ_API_KEY1'], st.secrets['GROQ_API_KEY2'],
                  st.secrets['GROQ_API_KEY3'], st.secrets['GROQ_API_KEY4'],
                  st.secrets['GROQ_API_KEY5']]
 
-def Groq_ans(query): #STEP 2 : User prompt response in text
-    client = Groq(api_key=GROQ_API_KEYS[0])
+def Noah_Groq1(chat_history, query, query_num): 
+    #STEP 2 : User prompt response in text
+    query_num = query_num%5
+    prompt = f"""This is our previous conversation .
+Chat history : 
+{chat_history}
+
+Suppose two people A and B are in an online meeting. Person A asks B the following question: "{query}"
+
+Determine if B needs A's camera to be on to answer this specific question. Choose one of these two options and provide a brief explanation:
+
+1. Yes, B requires A's camera to be on to respond to this question.
+2. No, B does not require A's camera to be on to respond to this question.
+
+Important rules:
+- Assume the camera starts off for each new question.
+- If the question explicitly asks about visual information (e.g., "Can you see me?", "What am I wearing?"), choose option 1.
+- If the question is about past visual information (e.g., "What was I wearing earlier?", "Did you see my right hand last time?"), choose option 2, as the camera doesn't need to be on now to recall past observations.
+- For questions that don't require visual information (e.g., "What's the capital of France?"), choose option 2.
+- If the question is incomplete or lacks context, refer to the previous questions in the chat history to understand the context. If it appears to be a continuation of a previous visual question, choose option 1.
+- If the question uses words like "now" or "at the moment", treat it as a new request for current visual information and choose option 1.
+
+Examples:
+Question: Can you see me?
+Answer: 1. Yes, B requires A's camera to be on to respond to this question. This question asks about current visual information.
+
+Question: And now?
+Answer: 1. Yes, B requires A's camera to be on to respond to this question. This is a continuation of the previous visual question and uses "now" to indicate current visual information is needed.
+
+Question: What was I wearing earlier?
+Answer: 2. No, B does not require A's camera to be on to respond to this question. This question asks about past visual information, which doesn't require the camera to be on now.
+
+Question: Can you name five countries?
+Answer: 2. No, B does not require A's camera to be on to respond to this question. Naming countries doesn't require visual information.
+
+Question: Am I smiling?
+Answer: 1. Yes, B requires A's camera to be on to respond to this question. This asks about current visual information.
+"""
+
+    client = Groq(api_key=GROQ_API_KEYS[query_num])
     chat_completion = client.chat.completions.create(    
         messages=[
             {
                 "role": "user",
-                "content": f"{query}",
+                "content": f"{prompt}",
+            }
+        ],
+        model='llama3-70b-8192',
+    )
+    response = chat_completion.choices[0].message.content
+    return response
+
+def Noah_Groq2(chat_history, query, query_num): #STEP 2 : User prompt response in text
+    query_num = (query_num+1)%5
+
+    prompt = f"""This is our previous conversation .
+Chat history : 
+{chat_history}
+
+{query}
+"""
+    client = Groq(api_key=GROQ_API_KEYS[query_num])
+    chat_completion = client.chat.completions.create(    
+        messages=[
+            {
+                "role": "user",
+                "content": f"{prompt}",
             }
         ],
         model='llama3-70b-8192',
@@ -66,5 +126,3 @@ Answer (remember, ONLY use the provided information):
     for word in tokens:
         yield word + " "
         time.sleep(0.002)
-        
-

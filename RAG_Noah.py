@@ -4,7 +4,6 @@ import base64
 from streamlit_mic_recorder import speech_to_text
 import cv2
 import streamlit as st
-import pyttsx3
 from PyPDF2 import PdfReader
 from langchain.text_splitter import CharacterTextSplitter
 from langchain_community.embeddings import HuggingFaceEmbeddings
@@ -13,7 +12,6 @@ import speech_recognition as sr
 from gtts import gTTS
 import io
 print('total Time taken for imports : ',time.time()- initial)
-
 
 st.set_page_config(page_title='Smart glasses', page_icon=':👓:')
 
@@ -237,13 +235,14 @@ if __name__ == '__main__':
 
     query = st.chat_input(placeholder='Message Noah')
     print('time for loading entire web page : ', time.time() - initial)
+
     ini = time.time()
     import txt_detection
     cap = get_cap()
     import ans_groq
     print('cv loading time : ', time.time()- ini)
 
-    text = None
+    
     if transcribed_txt :
         text = transcribed_txt
 
