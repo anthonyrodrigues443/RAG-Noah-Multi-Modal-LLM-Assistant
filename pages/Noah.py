@@ -90,9 +90,9 @@ def handling_required_operations(query, prev_response, caps):
 
     for value in seq_op.values():
         if 'yes' in value.lower():
-            # object_detection_result, hand_tracking_result =  vision.run_concurrently(caps)
-            object_detection_result = vision.object_detection(caps)
-            hand_tracking_result = vision.hand_tracking(caps)
+            object_detection_result, hand_tracking_result =  vision.run_concurrently(caps)
+            # object_detection_result = vision.object_detection(caps)
+            # hand_tracking_result = vision.hand_tracking(caps)
             observations_summary = f'''Suppose you have ability to access the camera and when the Question(mentioned below) was asked you opened the camera and took the observations. Observations :\n{object_detection_result}\n{hand_tracking_result}. \nBased on all the observations mentioned above try to prepare the response only for the asked question(Important Instructions : 1.Dont unnecessarily state down all the observations 2.If the question is about the chat history observations answer accordingly you dont have to answer with current observations when the question is about previous observations ).\n Question : {query}'''
             return observations_summary
 
@@ -240,17 +240,16 @@ if __name__ == '__main__':
 
         with st.chat_message(name='assistant', avatar=assistant_avatar_path):
             response = ans_groq.Noah_Groq1(history_model1, query, query_number)
-            print(response)
+            print('\nResponse of LLM 1 : ', response)
             new_query = handling_required_operations(query, response, cap)
             st.session_state.messages_2.append({"role":"user","content":new_query})
 
-            new_response = ans_groq.Noah_Groq2(history_model2, new_query, query_number)
+            new_response = st.write_stream(ans_groq.Noah_Groq2(history_model2, new_query, query_number))
 
-            st.write(new_response)
             audio_file = text_to_speech(new_response)
             autoplay_tts(audio_file)
 
         st.session_state.messages_1.append({"role":"assistant","content":new_response})
         st.session_state.messages_2.append({"role":"assistant","content":new_response})
 
-        st.sidebar.write(st.session_state.messages_2)
+        print('\n Chat history : ',st.session_state.messages_2)

@@ -25,10 +25,10 @@ Determine if B needs A's camera to be on to answer this specific question. Choos
 Important rules:
 - Assume the camera starts off for each new question.
 - If the question explicitly asks about visual information (e.g., "Can you see me?", "What am I wearing?"), choose option 1.
-- If the question is about past visual information (e.g., "What was I wearing earlier?", "Did you see my right hand last time?"), choose option 2, as the camera doesn't need to be on now to recall past observations.
+- If the question is about past visual information(past tense) (e.g., "What was I wearing earlier?"(was past tense), "Did you see my right hand last time?"(did past tense), "Which fingers were up ?"(were past tense)), choose option 2, as the camera doesn't need to be on now to recall past observations.
 - For questions that don't require visual information (e.g., "What's the capital of France?"), choose option 2.
 - If the question is incomplete or lacks context, refer to the previous questions in the chat history to understand the context. If it appears to be a continuation of a previous visual question, choose option 1.
-- If the question uses words like "now" or "at the moment", treat it as a new request for current visual information and choose option 1.
+- If the question uses present tense verbs like "now" or "at the moment", treat it as a new request for current visual information and choose option 1.
 
 Examples:
 Question: Can you see me?
@@ -79,8 +79,14 @@ Chat history :
         ],
         model='llama3-70b-8192',
     )
+
     response = chat_completion.choices[0].message.content
-    return response
+    
+    tokens = re.findall(r'\S+|\n|\t', response)
+
+    for word in tokens:
+        yield word + " "
+        time.sleep(0.002)
 
 
 def RAG_Groq_ans(chat_history, context_chunks, query, query_num): #STEP 2 :User prompt response in text
