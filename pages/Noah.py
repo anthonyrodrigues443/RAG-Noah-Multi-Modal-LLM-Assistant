@@ -205,6 +205,10 @@ if __name__ == '__main__':
         query = text
         
     if query:
+        if st.session_state.current_audio:
+            st.session_state.current_audio.empty()
+            st.session_state.current_audio = None
+
         query_number+=1
         with st.chat_message('user', avatar=user_avatar_path):
             st.write(query)
