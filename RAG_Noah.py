@@ -49,26 +49,21 @@ def get_vectorstore(chunks):
     print('vectorstore : ', time.time()-ini)
     return vectorstore
 
+def has_letters_and_numbers(s):
+    has_letter = False
+    has_digit = False
 
-def rec_n_ret():    #STEP 1 : User speech to text with mic
-    r = sr.Recognizer()
-    try:
-        with sr.Microphone() as source2:
-            r.adjust_for_ambient_noise(source2, duration=0.2)
-            temp2 = r.listen(source2)
-            MyText = r.recognize_google(temp2)
-            MyText = MyText.lower()
-            return MyText
-            
-    except sr.RequestError as e:
-        MyText = f"Could not request results; {e}"
-        st.write(MyText+' could you please repeat ?')
-        return None
-
-    except sr.UnknownValueError:
-        MyText = "unknown error occurred"
-        st.write(MyText+' could you please repeat ?')
-        return None
+    for char in s:
+        if char.isalpha():
+            has_letter = True
+        elif char.isdigit():
+            has_digit = True
+        
+        # If both are found, short-circuit the loop
+        if has_letter and has_digit :
+            return True
+    
+    return False
 
 @st.cache_resource(show_spinner=False)
 def get_cap():
