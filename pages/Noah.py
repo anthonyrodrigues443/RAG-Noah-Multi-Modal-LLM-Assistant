@@ -79,8 +79,6 @@ def handling_required_operations(query, prev_response, caps):
     for value in seq_op.values():
         if 'yes' in value.lower():
             object_detection_result, hand_tracking_result =  vision.run_concurrently(caps)
-            # object_detection_result = vision.object_detection(caps)
-            # hand_tracking_result = vision.hand_tracking(caps)
             observations_summary = f'''Suppose you have ability to access the camera and when the Question(mentioned below) was asked you opened the camera and took the observations. Observations :\n{object_detection_result}\n{hand_tracking_result}. \nBased on all the observations mentioned above try to prepare the response only for the asked question(Important Instructions : 1.Dont unnecessarily state down all the observations 2.If the question is about the chat history observations answer accordingly you dont have to answer with current observations when the question is about previous observations ).\n Question : {query}'''
             return observations_summary
 
