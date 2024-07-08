@@ -1,22 +1,44 @@
 import time
 initial = time.time()
-import cv2
 import streamlit as st
-from gtts import gTTS
+from streamlit_mic_recorder import speech_to_text
+import cv2
 import vision
+from gtts import gTTS
 import base64
 import warnings
-import sim
-from streamlit_mic_recorder import speech_to_text
 import io
 print('total Time taken for imports : ',time.time()- initial)
 
 warnings.filterwarnings('ignore')
 
+#-------------------------Accessing Camera-----------------------------------
 @st.cache_resource(show_spinner=False)
 def get_cap():
     return cv2.VideoCapture(0)
 
+@st.cache_resource(show_spinner=False)
+def get_cap2():
+    return cv2.VideoCapture(2)
+
+#---------------- Checking response if CV is to be performed -------------------
+def has_letters_and_numbers(s):
+    has_letter = False
+    has_digit = False
+
+    for char in s:
+        if char.isalpha():
+            has_letter = True
+        elif char.isdigit():
+            has_digit = True
+        
+        # If both are found, short-circuit the loop
+        if has_letter and has_digit :
+            return True
+    
+    return False
+
+#------------------ Autoplay Response to Speech ------------------------------
 def text_to_speech(text):
     tts = gTTS(text=text, lang='en', slow=False)
     fp = io.BytesIO()
@@ -36,6 +58,7 @@ def autoplay_tts(audio_bytes, autoplay=True):
     st.session_state.current_audio = st.markdown(md, unsafe_allow_html=True)
     return st.session_state.current_audio
 
+#-------------------------- Clear Chat history -------------------------------
 def clear_history():
     clear_hist = st.sidebar.button('Clear history', use_container_width=True, type='primary')
     if clear_hist :
@@ -44,17 +67,13 @@ def clear_history():
         st.sidebar.markdown('<h1><center>History cleared</center></h1>', 
                             unsafe_allow_html=True)
         
-results = {}
 
-# Wrapper function to store the result of the target function
-def thread_wrapper(func, key):
-    results[key] = func()
-
+#---------------- Performing required operations as per response ---------------
 def handling_required_operations(query, prev_response, caps):
     seq_op = dict()
 
     for line in prev_response.splitlines():
-        if sim.has_letters_and_numbers(line):
+        if has_letters_and_numbers(line):
             seq_op[line[0]] = line
 
     for value in seq_op.values():
@@ -68,15 +87,12 @@ def handling_required_operations(query, prev_response, caps):
         elif 'no' in value.lower():
             return "Question : " + query
 
-# with st.sidebar:
-#     model = st.radio(label="Select model", 
-#     options=['llama3-8b-8192', 'llama3-70b-8192', 'mixtral-8x7b-32768', 'gemma-7b-it'])
-#     if model:
-#         clear_history()
 
+#------------------------------- Styling UI ----------------------------------
 st.set_page_config(page_title='Smart glasses', page_icon=':👓:')
 st.header('Noah :eyeglasses: ')
 
+# font size
 st.markdown(
     """
     <style>
@@ -96,7 +112,7 @@ st.markdown(
     </style>
     """, unsafe_allow_html=True)
 
-#user text styling
+#user text bg
 st.markdown(
     """
 <style>
@@ -108,7 +124,7 @@ st.markdown(
 </style>
 """, unsafe_allow_html=True)
 
-# assistant text styling
+# assistant text bg
 st.markdown(
     """
 <style>
@@ -131,20 +147,10 @@ st.markdown(
 </style>
 """, unsafe_allow_html=True)
 
-st.markdown(
-    """
-<style>
-    .st-emotion-cache-19rxjzo {
-    position: fixed;
-    top: 400px;
-}
-</style>
-""", unsafe_allow_html=True)
-
-
 user_avatar_path = "imagefiles/user_avatar.png"
 assistant_avatar_path = "imagefiles/assistant_avatar.png"
 
+#---------------------------------- Running -----------------------------------
 if __name__ == '__main__':
     clear_history()
     query_number = 0
@@ -182,6 +188,7 @@ if __name__ == '__main__':
     ini = time.time()
     import txt_detection
     cap = get_cap()
+    cap2 = get_cap2()
     import ans_groq
     print('cv loading time : ', time.time()- ini)
 
@@ -189,7 +196,7 @@ if __name__ == '__main__':
         text = transcribed_txt
 
     if cam or st.session_state.start_func:
-        text = txt_detection.text_extraction(cap)
+        text = txt_detection.text_extraction(cap2)
         st.session_state.start_func = False
         if text == 'No text detected' :
             text = None
@@ -221,4 +228,4 @@ if __name__ == '__main__':
         st.session_state.messages_1.append({"role":"assistant","content":new_response})
         st.session_state.messages_2.append({"role":"assistant","content":new_response})
 
-        print('\n Chat history : ',st.session_state.messages_2)
+        print('\n\n Chat history : ',st.session_state.messages_2)
