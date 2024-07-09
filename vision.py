@@ -7,7 +7,6 @@ from cvzone.HandTrackingModule import HandDetector
 import time
 import concurrent.futures
 from queue import Queue
-import threading
 import warnings
 from collections import Counter
 
