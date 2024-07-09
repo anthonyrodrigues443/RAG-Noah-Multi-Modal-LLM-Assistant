@@ -67,7 +67,7 @@ def has_letters_and_numbers(s):
 
 @st.cache_resource(show_spinner=False)
 def get_cap():
-    return cv2.VideoCapture(2)
+    return cv2.VideoCapture(0)
 
 def text_to_speech(text):
     tts = gTTS(text=text, lang='en', slow=False)
