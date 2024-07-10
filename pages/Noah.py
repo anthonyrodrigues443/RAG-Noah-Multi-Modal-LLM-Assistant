@@ -104,8 +104,8 @@ st.markdown(
 st.markdown(
     """
     <style>
-    .st-emotion-cache-ul70r3 li{
-        font-size: 1.25rem;
+    .st-emotion-cache-1sno8jx li {
+    font-size: 1.25rem;
     }
     </style>
     """, unsafe_allow_html=True)
