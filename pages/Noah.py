@@ -5,7 +5,7 @@ from streamlit_mic_recorder import speech_to_text
 import cv2
 import vision
 from gtts import gTTS
-import base64
+import base64 
 import warnings
 import io
 print('total Time taken for imports : ',time.time()- initial)
@@ -19,7 +19,7 @@ def get_cap():
 
 @st.cache_resource(show_spinner=False)
 def get_cap2():
-    return cv2.VideoCapture(2)
+    return cv2.VideoCapture(0)
 
 #---------------- Checking response if CV is to be performed -------------------
 def has_letters_and_numbers(s):
@@ -43,20 +43,17 @@ def text_to_speech(text):
     tts = gTTS(text=text, lang='en', slow=False)
     fp = io.BytesIO()
     tts.write_to_fp(fp)
-    fp.seek(0)
-    return fp.read()
-
+    audio_bytes = fp.getvalue()
+    return audio_bytes
+  
 def autoplay_tts(audio_bytes, autoplay=True):
-    if st.session_state.current_audio:
-        st.session_state.current_audio.empty()
     b64 = base64.b64encode(audio_bytes).decode()
     md = f"""
-        <audio autoplay={autoplay} class="stAudio">
-        <source src="data:audio/mp3;base64,{b64}" type="audio/mp3" format="audio/mpeg">
+        <audio id="tts_audio" controls autoplay="{autoplay}">
+        <source src="data:audio/mp3;base64,{b64}" type="audio/mp3">
         </audio>
         """
-    st.session_state.current_audio = st.markdown(md, unsafe_allow_html=True)
-    return st.session_state.current_audio
+    return st.markdown(md, unsafe_allow_html=True)
 
 #-------------------------- Clear Chat history -------------------------------
 def clear_history():
@@ -66,7 +63,6 @@ def clear_history():
         st.session_state.messages_2.clear()
         st.sidebar.markdown('<h1><center>History cleared</center></h1>', 
                             unsafe_allow_html=True)
-        
 
 #---------------- Performing required operations as per response ---------------
 def handling_required_operations(query, prev_response, caps):
@@ -82,9 +78,8 @@ def handling_required_operations(query, prev_response, caps):
             observations_summary = f'''Suppose you have ability to access the camera and when the Question(mentioned below) was asked you opened the camera and took the observations. Observations :\n{object_detection_result}\n{hand_tracking_result}. \nBased on all the observations mentioned above try to prepare the response only for the asked question(Important Instructions : 1.Dont unnecessarily state down all the observations 2.If the question is about the chat history observations answer accordingly you dont have to answer with current observations when the question is about previous observations ).\n Question : {query}'''
             return observations_summary
 
-        elif 'no' in value.lower():
+        elif 'no' in value.lower() : 
             return "Question : " + query
-
 
 #------------------------------- Styling UI ----------------------------------
 st.set_page_config(page_title='Smart glasses', page_icon=':👓:')
@@ -151,17 +146,16 @@ assistant_avatar_path = "imagefiles/assistant_avatar.png"
 #---------------------------------- Running -----------------------------------
 if __name__ == '__main__':
     clear_history()
-    query_number = 0
-    if 'current_audio' not in st.session_state:
-        st.session_state.current_audio = None
     if "messages_1" not in st.session_state:
         st.session_state.messages_1 = []
     if "messages_2" not in st.session_state:
         st.session_state.messages_2 = []
     if 'start_func' not in st.session_state:
         st.session_state.start_func = False
+    if 'query_num' not in st.session_state:
+        st.session_state.query_num = 1
 
-    def callback():
+    def text_extraction_callback():
         st.session_state.start_func = True
 
     for message in st.session_state.messages_1:
@@ -176,7 +170,7 @@ if __name__ == '__main__':
     with st.sidebar:
         c1, c2 = st.columns(2)
         with c1 :
-            cam = st.button('📸', help='Visual input', on_click=callback)
+            cam = st.button('📸', help='Visual input', on_click=text_extraction_callback)
         with c2:
             transcribed_txt = speech_to_text("🎙️", "🟥",just_once=True)
 
@@ -201,15 +195,24 @@ if __name__ == '__main__':
 
     if text:
         query = text
-        
-    if query:
-        if st.session_state.current_audio:
-            st.session_state.current_audio.empty()
-            st.session_state.current_audio = None
 
-        query_number+=1
+    if query:
+        st.markdown(
+        """
+        <script>
+        var audio = document.getElementById('tts_audio');
+        if (audio) {
+            audio.pause();
+            audio.currentTime = 0;
+        }
+        </script>
+        """,
+        unsafe_allow_html=True
+    )
+ 
+        st.session_state.query_num+=1
         with st.chat_message('user', avatar=user_avatar_path):
-            st.write(query)
+            st.markdown(query)
 
         st.session_state.messages_1.append({"role":"user","content":query})
 
@@ -217,17 +220,18 @@ if __name__ == '__main__':
         history_model2 = st.session_state.messages_2
 
         with st.chat_message(name='assistant', avatar=assistant_avatar_path):
-            response = ans_groq.Noah_Groq1(history_model1, query, query_number)
-            print('\nResponse of LLM 1 : ', response)
+
+            ini = time.time()
+            response = ans_groq.Noah_Groq1(history_model1, query, st.session_state.query_num)
+            print('Time taken for llm 1 : ', time.time() - ini)
             new_query = handling_required_operations(query, response, cap)
             st.session_state.messages_2.append({"role":"user","content":new_query})
+            ini = time.time() 
+            new_response = st.write_stream(ans_groq.Noah_Groq2(history_model2, new_query, st.session_state.query_num))
+            print('Time taken for llm 2 : ', time.time() - ini)
+            audio_bytes = text_to_speech(new_response)
+            autoplay_tts(audio_bytes)
 
-            new_response = st.write_stream(ans_groq.Noah_Groq2(history_model2, new_query, query_number))
-
-            audio_file = text_to_speech(new_response)
-            autoplay_tts(audio_file)
-
-        st.session_state.messages_1.append({"role":"assistant","content":new_response})
+        st.session_state.messages_1.append({"role":"assistant","content":new_response})  
         st.session_state.messages_2.append({"role":"assistant","content":new_response})
 
-        print('\n\n Chat history : ',st.session_state.messages_2)
