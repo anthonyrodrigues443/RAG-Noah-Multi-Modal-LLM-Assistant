@@ -4,14 +4,9 @@
 
 The RAG LLM can also be integrated into websites where the data of the website/institutions is provided as static information and users can access all the essential information at one place.
 
-<center>
-<font color="red">
+# RAG Noah (PDF/Website GPT)
 
-<h1> RAG Noah (PDF/Website GPT)</h1>
-
-</center>
-
-<h2> Working of RAG Noah</h2>
+## Working of RAG Noah
 
 1) The given PDFs are read and the entire text within the pdf is extracted with a string.
 2) The text is further splitted into smaller chunks of text .
@@ -33,4 +28,18 @@ Visual input extracts text from visuals and asks the user to process or re click
 8. The new query is submitted to the GROQ API and the response is retrieved.
 9. The response is then displayed, turned to speech and autoplayed.
 
-# Noah
+# Noah (LLM with Real time CV capabilities)
+
+## Working of Noah
+
+1. Three types of user query is accepted even here ( Speech + Text + Visual ).
+2. The user query is given to the Groq API 1 which takes the input along with a scenario as a prompt template and restricted to give answer within the two options(Visual information needed/Visual information not needed) given in the prompt only .
+3. The API 1 then gives the response accordingly selecting one of the two options.
+4. If the option "Visual response needed" is in the response object detection and hand tracking is performed and the detections are listed .
+5. These detections are then added to the query as context and provided to the API 2 .
+6. Now the API 2 has the observations as context and can answer accordingly.
+
+### Why 2 API's ?
+-> 1. Since performing CV operations at all times can be memory consuming.
+2. Lead the app to lag and Crash eventually.
+
