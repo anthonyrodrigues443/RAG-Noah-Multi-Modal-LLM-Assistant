@@ -5,7 +5,7 @@
 The RAG LLM can also be integrated into websites where the data of the website/institutions is provided as static information and users can access all the essential information at one place.
 
 ## You can test the webapp now !!
-Link For RAG Noah and Noah : https://rag-noah.streamlit.app/
+Link For <u>RAG Noah and Noah</u> : https://rag-noah.streamlit.app/<br>
 Note - the camera features are not available online as there is no successful module to access live client cam and send the live feed frames to the python code.<br>
 (If you do know how to do it you can dm me on My <a href="https://www.linkedin.com/in/anthonyrodrigues443">LinkedIn</a>)
 
@@ -52,8 +52,8 @@ Visual input extracts text from visuals and asks the user to process or re click
 # Current Achievements of Noah
 
 1. It can detect hands
-2. objects in your hands
-3. count the number of hands you show including the fingers with the finger names as well.
+2. Objects in your hands
+3. Count the number of hands you show including the fingers with the finger names as well.
 
 # Future Goals for Noah
 
