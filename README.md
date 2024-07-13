@@ -16,6 +16,8 @@ The RAG LLM can also be integrated into websites where the data of the website/i
 5) User Query ---------> Plain text   
 &emsp;&emsp;&emsp;&emsp;---------> Voice input  
 &emsp;&emsp;&emsp;&emsp;---------> Visual input 
+
+
 Plain text is directly given to the RAG Noah.
 Voice input is transcribed into text and given to the RAG Noah.
 Visual input extracts text from visuals and asks the user to process or re click and extract text, the text extracted is then sent to the RAG Noah.
