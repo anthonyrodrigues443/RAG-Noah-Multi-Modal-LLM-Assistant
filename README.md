@@ -4,6 +4,11 @@
 
 The RAG LLM can also be integrated into websites where the data of the website/institutions is provided as static information and users can access all the essential information at one place.
 
+## You can test the webapp now !!
+Link For RAG Noah and Noah : https://rag-noah.streamlit.app/
+Note - the camera features are not available online as there is no successful module to access live client cam and send the live feed frames to the python code.<br>
+(If you do know how to do it you can dm me on My <a href="https://www.linkedin.com/in/anthonyrodrigues443">LinkedIn</a>)
+
 # RAG Noah (PDF/Website GPT)
 
 ## Working of RAG Noah
@@ -40,7 +45,19 @@ Visual input extracts text from visuals and asks the user to process or re click
 6. Now the API 2 has the observations as context and can answer accordingly.
 
 ### Why 2 API's ?
-<ol type="o">
-<li>Since performing CV operations at all times can be memory consuming.</li>
-<li>Lead the app to lag and Crash eventually.</li>
-</ol>
+1. Since performing CV operations at all times can be memory consuming.
+2. Lead the app to lag and Crash eventually.
+3. Getting responses quickly as there is no extra computation.
+
+# Current Achievements of Noah
+
+1. It can detect hands
+2. objects in your hands
+3. count the number of hands you show including the fingers with the finger names as well.
+
+# Future Goals for Noah
+
+1. Image captioning - to be able to caption the real time views .
+2. Image generator - to be able to enhance pictures in real time .
+3. To be able to play games (Rock-paper-scissors, etc)
+
