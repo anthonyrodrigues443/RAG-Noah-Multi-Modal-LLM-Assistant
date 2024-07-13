@@ -9,6 +9,14 @@ Link For <u>RAG Noah and Noah</u> : https://rag-noah.streamlit.app/<br>
 Note - the camera features are not available online as there is no successful module to access live client cam and send the live feed frames to the python code.<br>
 (If you do know how to do it you can dm me on My <a href="https://www.linkedin.com/in/anthonyrodrigues443">LinkedIn</a>)
 
+## How to run locally
+'''python
+git clone https://github.com/Sharkytony/Smart_glasses_project.git(In the terminal within the directory you want to run the code)
+
+streamlit run RAG_Noah.py
+'''
+
+
 # RAG Noah (PDF/Website GPT)
 
 ## Working of RAG Noah
