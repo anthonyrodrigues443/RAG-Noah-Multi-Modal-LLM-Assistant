@@ -18,7 +18,7 @@ The RAG LLM can also be integrated into websites where the data of the website/i
 4) The embeddings are then stored in a vectorstore .
 5) User Query 
 
----------> Text input
+---------> Text input<br>
 Plain text is directly given to the RAG Noah.
 
 ---------> Voice input  
