@@ -1,4 +1,4 @@
-# Smart_glasses_project 😎
+# Smart Glasses Project 😎
 
 ⭐RAG Noah(RAG LLM)📚+ Noah(General LLM🌐 with capability of real time computer vision tasks🔭).  Ultimate Goal is to integrate the software in a AR glasses.
 
