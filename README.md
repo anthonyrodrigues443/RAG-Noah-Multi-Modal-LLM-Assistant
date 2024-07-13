@@ -26,13 +26,9 @@ Voice input is transcribed into text and given to the RAG Noah.
 
 ---------> Visual input <br>
 Visual input extracts text from visuals and asks the user to process or re click and extract text, the text extracted is then sent to the RAG Noah.
-
 6. The user query is then embedded and similarity search is performed with the query and the vectorstore.
-
 7. Top 5 closest chunks are retrieved and added to the query along with the chat history and as context.
-
 8. The new query is submitted to the GROQ API and the response is retrieved.
-
 9. The response is then displayed, turned to speech and autoplayed.
 
 # Noah
