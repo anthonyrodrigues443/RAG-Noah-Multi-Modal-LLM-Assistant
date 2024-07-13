@@ -21,7 +21,7 @@ Plain text is directly given to the RAG Noah.
 ---------> Voice input  
 Voice input is transcribed into text and given to the RAG Noah.
 
----------> Visual input 
+---------> Visual input <br>
 Visual input extracts text from visuals and asks the user to process or re click and extract text, the text extracted is then sent to the RAG Noah.
 
 6. The user query is then embedded and similarity search is performed with the query and the vectorstore.
