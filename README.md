@@ -11,7 +11,8 @@ Note - the camera features are not available online as there is no successful mo
 
 ## How to run locally
 ```python
-git clone https://github.com/Sharkytony/Smart_glasses_project.git(In the terminal within the directory you want to run the code)
+git clone https://github.com/Sharkytony/Smart_glasses_project.git
+(In the terminal within the directory you want to run the code)
 
 streamlit run RAG_Noah.py
 ```
