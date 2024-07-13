@@ -28,7 +28,9 @@ your_venv_name/Scripts/activate
 ```
 pip install -r requirements.txt
 ```
-7. Finally run 
+7. Rename the secrets_eg.toml to secrets.toml and setup your API keys for GROQ.
+
+8. Finally run 
 ```
 streamlit run RAG_Noah.py
 ```
