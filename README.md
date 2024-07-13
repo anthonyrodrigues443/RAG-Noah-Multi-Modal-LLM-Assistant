@@ -40,7 +40,7 @@ Visual input extracts text from visuals and asks the user to process or re click
 6. Now the API 2 has the observations as context and can answer accordingly.
 
 ### Why 2 API's ?
-<ol>
-<li> 1. Since performing CV operations at all times can be memory consuming.</li>
-<li>2. Lead the app to lag and Crash eventually.</li>
+<ol type="o">
+<li>Since performing CV operations at all times can be memory consuming.</li>
+<li>Lead the app to lag and Crash eventually.</li>
 </ol>
