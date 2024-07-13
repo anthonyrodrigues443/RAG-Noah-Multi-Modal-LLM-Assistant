@@ -5,12 +5,13 @@
 The RAG LLM can also be integrated into websites where the data of the website/institutions is provided as static information and users can access all the essential information at one place.
 
 <center>
+<font color="red">
 
-# RAG Noah (PDF/Website GPT)
+<h1> RAG Noah (PDF/Website GPT)</h1>
 
 </center>
 
-## Working of RAG Noah
+<h2> Working of RAG Noah</h2>
 
 1) The given PDFs are read and the entire text within the pdf is extracted with a string.
 2) The text is further splitted into smaller chunks of text .
