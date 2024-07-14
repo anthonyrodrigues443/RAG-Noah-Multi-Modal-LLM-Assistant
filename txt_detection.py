@@ -64,11 +64,9 @@ def text_extraction(cap):
             st.session_state.last_frame = frame.copy()
 
         if capture:  # click
-            cropped_image_path = 'imagefiles/cropped.png'   
             capture_frame = st.session_state.last_frame
             cropped_image = capture_frame[top_line:bottom_line, :]
             grey = cv2.cvtColor(cropped_image, cv2.COLOR_BGR2GRAY)
-            cv2.imwrite(cropped_image_path, grey)
             result = st.session_state.reader.readtext(grey)
             st.session_state.prompt = result[-1][1] if result else 'No text detected'
             capture = False
