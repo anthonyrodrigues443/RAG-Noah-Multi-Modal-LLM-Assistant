@@ -272,9 +272,9 @@ if __name__ == '__main__':
             query_number +=1
             with st.chat_message(name='assistant', avatar=assistant_avatar_path):
                 response = st.write_stream(ans_groq.RAG_Groq_ans(st.session_state.messages, rel_chunks, query, query_number))
+                st.session_state.messages.append({"role": "assistant", "content": response})
                 audio_bytes = text_to_speech(response)
                 autoplay_tts(audio_bytes)
-            st.session_state.messages.append({"role": "assistant", "content": response})
     except Exception as ex:
     #     st.write(ex)
         st.markdown('<h4><font color="yellow"><center>Oops! We need some PDFs as Context.', unsafe_allow_html=True)
