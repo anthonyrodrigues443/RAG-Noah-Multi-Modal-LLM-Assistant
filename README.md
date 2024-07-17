@@ -40,7 +40,7 @@ streamlit run RAG_Noah.py
 
 ## Working of RAG Noah
 
-1) The given PDFs are read and the entire text within the pdf is extracted with a string.
+1) The given PDFs + Websites are read and the entire text within the document/URL is extracted and concatenated into a string.
 2) The text is further splitted into smaller chunks of text .
 3) These chunks are then embedded into vectors .
 4) The embeddings are then stored in a vectorstore .
