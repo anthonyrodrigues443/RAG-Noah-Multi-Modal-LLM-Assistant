@@ -7,7 +7,9 @@ from streamlit_mic_recorder import speech_to_text
 import cv2
 import streamlit as st
 from PyPDF2 import PdfReader
-from langchain.text_splitter import CharacterTextSplitter
+import re
+from langchain_community.document_loaders import WebBaseLoader
+from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 import speech_recognition as sr
@@ -31,12 +33,35 @@ def pdf_reader(pdfs):
             text += pg.extract_text()
     return text, sum(no_of_pgs)
 
+
+#-------------------------Reading Webpages-----------------------------------
+
+def clear_all_links():
+    st.session_state.clear_links = True
+
+def remove_single_link(index):
+    if index < len(st.session_state.links_list):
+        st.session_state.links_list.pop(index)
+
+def start_processing():
+    st.session_state.start_process = True
+
+@st.cache_data(show_spinner=False)
+def webpage_reader(links):
+    if st.session_state.start_process:
+        loader = WebBaseLoader(links)
+        content = loader.load()
+        content_str = ''.join(doc.page_content for doc in content)
+        content_str = re.sub(r'\n+', '\n', content_str)
+        st.session_state.start_process = False
+        return content_str 
+
 #----------------------- Extracting chunks --------------------------------
 @st.cache_data(show_spinner=False)
 def get_text_chunks(text):
     max_tokens = 1024
-    text_splitter = CharacterTextSplitter(
-        separator='\n',
+    text_splitter = RecursiveCharacterTextSplitter(
+        separators=['\n', ' '],
         chunk_size=max_tokens,
         chunk_overlap=max_tokens//4,
         length_function=len
@@ -160,43 +185,102 @@ st.markdown(
 </style>
 """, unsafe_allow_html=True)
 
+#removing send button to remove duplication
+
+st.markdown(
+    """
+<style>
+    .st-emotion-cache-1f3w014 {
+    width:  0px;
+    }
+
+</style>
+""", unsafe_allow_html=True)
 
 user_avatar_path = "imagefiles/user_avatar.png"
 assistant_avatar_path = "imagefiles/assistant_avatar.png"
 
 #------------------------ Running of RAG ------------------------------------
 def main():
+    if st.session_state.clear_links:
+        st.session_state.links_list.clear()
+        st.session_state.clear_links = False
+
     with st.sidebar:
-        st.markdown('<h1><center>Your docs </h1></center>', unsafe_allow_html=True)
-        files = st.file_uploader(label="Upload docs",accept_multiple_files=True,
-                label_visibility='hidden')
-        if st.button('Process', use_container_width=True, type='primary'):
-            if len(files) == 0:
+        st.markdown('<h1><center>Your docs </center></h1>', unsafe_allow_html=True)
+        files = st.file_uploader(label="Upload docs",accept_multiple_files=True, label_visibility='hidden')
+        st.markdown('<h1><center>Provide website links </center></h1>', unsafe_allow_html=True)
+        link = st.sidebar.chat_input('Paste the link')
+        if link:
+            if not link.startswith('https://'):
+                link = 'https://' + link
+            if link not in st.session_state.links_list:
+                st.session_state.links_list.append(link)
+        if len(st.session_state.links_list) > 0:
+            with st.sidebar:
+                c1, c2 = st.columns([0.85, 0.15], vertical_alignment='center')
+                for i, link in enumerate(st.session_state.links_list):
+                    with c1:
+                        st.markdown(link)
+                    with c2:
+                        if st.button('⛔', key=f"remove_{i}"):
+                            remove_single_link(i)
+                            st.rerun()
+                            
+                c1, c2 = st.columns([0.3, 0.7])
+                with c2:
+                    clear_links = st.button('Clear all links', on_click=clear_all_links)
+
+        if st.button('Process', use_container_width=True, type='primary', on_click=start_processing):
+            if len(files) == 0 and len(st.session_state.links_list)==0:
                 st.markdown('<h1><center>No file detected', unsafe_allow_html=True)
             else : 
                 with st.spinner("Processing"):
-                    raw_text, no_of_pgs = pdf_reader(files)
-                    text_chunks = get_text_chunks(raw_text)
+                    pdf_text = None
+                    webpage_text = None
+                    if len(files) > 0 :
+                        pdf_text, no_of_pgs = pdf_reader(files)
+                    if len(st.session_state.links_list) > 0:
+                        webpage_text = webpage_reader(st.session_state.links_list)
+                    if pdf_text and webpage_text :
+                        full_text = pdf_text + webpage_text
+                    elif pdf_text :
+                        full_text = pdf_text
+                    else :
+                        full_text = webpage_text
+                    text_chunks = get_text_chunks(full_text)
                     stime = time.time()
                     vector_store = get_vectorstore(text_chunks)
                     etime = time.time()
-                    print('Vectorstore Generated', 'Time taken : ',etime-stime)
+                    print(' Total Time taken : ',etime-stime)
                     st.header('Your file has been processed.',anchor=False)
                     return vector_store
 
 #----------------------- Logic of the webapp -------------------------------
 if __name__ == '__main__':
-    vec_store = main()
-    if vec_store is not None:
-        st.session_state.vec_store = vec_store
-    clear_history()
-    query_number = 0
     if 'audio_placeholder' not in st.session_state:
         st.session_state.audio_placeholder = st.empty()
     if "messages" not in st.session_state:
         st.session_state.messages = []
     if 'start_func' not in st.session_state:
         st.session_state.start_func = False
+    if 'links_list' not in st.session_state:
+        st.session_state.links_list = []
+    if 'clear_links' not in st.session_state:
+        st.session_state.clear_links = False
+    if 'start_process' not in st.session_state:
+        st.session_state.start_process = False
+    try :
+        vec_store = main()
+    except Exception :
+        st.sidebar.markdown('Poor Internet Connection or Invalid URL ',
+            unsafe_allow_html=True)
+        vec_store = None
+
+    if vec_store is not None:
+        st.session_state.vec_store = vec_store
+    clear_history()
+    query_number = 0
 
     def callback():
         st.session_state.start_func = True
@@ -266,15 +350,18 @@ if __name__ == '__main__':
 
             rel_chunks = ''
             for i in range(len(chunks_)):
-                rel_chunks = rel_chunks + f'Context {i+1}: ' + chunks_[i].page_content
-
+                rel_chunks = rel_chunks + f'\nContext {i+1}: ' + chunks_[i].page_content
+            st.sidebar.write(rel_chunks)
             st.session_state.messages.append({"role": "user", "content": query})
             query_number +=1
             with st.chat_message(name='assistant', avatar=assistant_avatar_path):
+                ini = time.time()
                 response = st.write_stream(ans_groq.RAG_Groq_ans(st.session_state.messages, rel_chunks, query, query_number))
+                fin = time.time()
+                print('Response Time : ', fin-ini)
                 st.session_state.messages.append({"role": "assistant", "content": response})
                 audio_bytes = text_to_speech(response)
                 autoplay_tts(audio_bytes)
     except Exception as ex:
-    #     st.write(ex)
+        st.write(ex)
         st.markdown('<h4><font color="yellow"><center>Oops! We need some PDFs as Context.', unsafe_allow_html=True)
