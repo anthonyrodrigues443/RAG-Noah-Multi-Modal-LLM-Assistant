@@ -36,9 +36,9 @@ streamlit run RAG_Noah.py
 ```
 
 
-# RAG Noah (PDF + Website GPT)
+# RAG Noah (PDF📖 + Website GPT🌐)
 
-## Working of RAG Noah
+## Working of RAG Noah 🛠️
 
 1) The given PDFs + Websites are read and the entire text within the document/URL is extracted and concatenated into a string.
 2) The text is further splitted into smaller chunks of text .
@@ -80,9 +80,9 @@ Chat history - {
 9. The new query is submitted to the GROQ API and the response is retrieved.
 10. The response is then displayed, turned to speech and autoplayed.
 
-# Noah (LLM with Real time CV capabilities)
+# Noah (LLM💬 with Real time CV🔭 capabilities)
 
-## Working of Noah
+## Working of Noah 🛠️
 
 1. Three types of user query is accepted even here ( Speech + Text + Visual ).
 2. The user query is given to the Groq API 1 which takes the input along with a scenario as a prompt template and restricted to give answer within the two options(Visual information needed/Visual information not needed) given in the prompt only .
