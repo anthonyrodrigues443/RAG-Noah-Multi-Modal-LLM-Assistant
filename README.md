@@ -70,7 +70,7 @@ Chat history - {
     🟢If similarity search is performed on this query it may or may
     not be able to extract the benefits of 'Herbal Tea' specifically
     if there are benefits of other beverages as well.
-    🟢To overcome this we complete the question with the API. So now
+    🟢To overcome this we complete the question by submitting chat history along with the query in a template to the API. So now
     the modified query will be "Mention some benefits of Herbal Tea.".
     Which will extract the relevant chunks accurately.
     Modified Query : Mention some benefits of Herbal Tea.
