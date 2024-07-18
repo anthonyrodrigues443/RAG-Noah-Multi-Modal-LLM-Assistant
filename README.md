@@ -80,6 +80,18 @@ Chat history - {
 9. The new query is submitted to the GROQ API and the response is retrieved.
 10. The response is then displayed, turned to speech and autoplayed.
 
+## Current Achievements of RAG Noah ✅
+
+1. Precise Text Retrival .
+2. PDF's + Website's RAG at the same time .
+3. Cannot Jailbreak because of strong prompting .
+4. Can be easily integrated into any webpage .
+
+## Future Goals for RAG Noah🚀
+
+1. To have a fine-tuned llm for improving performance and not using API keys to scale the app .
+(Due to limitation[no GPU only CPU laptop] in resources cannot fine tune a LLM now.)
+
 # Noah (LLM💬 with Real time CV🔭 capabilities)
 
 ## Working of Noah 🛠️
@@ -96,13 +108,13 @@ Chat history - {
 2. Lead the app to lag and Crash eventually.
 3. Getting responses quickly as there is no extra computation.
 
-# Current Achievements of Noah
+## Current Achievements of Noah ✅
 
 1. It can detect hands
 2. Objects in your hands
 3. Count the number of hands you show including the fingers with the finger names as well.
 
-# Future Goals for Noah
+## Future Goals for Noah 🚀
 
 1. Image captioning - to be able to caption the real time views .
 2. Image generator - to be able to enhance pictures in real time .
