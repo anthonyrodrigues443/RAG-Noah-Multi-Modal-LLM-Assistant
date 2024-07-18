@@ -118,7 +118,8 @@ def clear_history():
                             unsafe_allow_html=True)
 
 #-----------------------------Styling UI --------------------------------------
-st.header("RAG Noah :eyeglasses: (Chat with PDF's :books:) ", anchor=False)
+st.header("RAG Noah :eyeglasses: ", anchor=False)
+st.markdown(" <h3>(Chat with PDF's📚 and Websites🌐)", unsafe_allow_html=True)
 
 
 # Chat messages font size
@@ -190,7 +191,7 @@ st.markdown(
 </style>
 """, unsafe_allow_html=True)
 
-#removing send button to remove duplication
+# removing send button to eliminate duplication
 
 st.markdown(
     """
@@ -390,5 +391,5 @@ if __name__ == '__main__':
                 except Exception:
                     st.write('Poor internet connect couldnt transcribe text to speech')
     except Exception as ex:
-        st.write(ex)
+        # st.write(ex)
         st.markdown('<h4><font color="yellow"><center>Oops! We need some PDFs as Context.', unsafe_allow_html=True)
