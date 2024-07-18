@@ -59,8 +59,20 @@ Visual input extracts text from visuals and asks the user to process or re click
 [This improves the quality of query and performs a better search within the document to retrieve context]
 ```
 For eg:
-Suppose Two Documents are submitted -
-    1
+Suppose a document is submitted -
+    1. Containing Different types of Beverages .
+    
+Chat history - { 
+    User : What is Herbal tea ? 
+    Assistant : Herbal tea info....
+    
+    User : mention some benefits of it .
+    🟢If similarity search is performed on this query it may or may
+    not be able to extract the benefits of 'Herbal Tea' specifically
+    if there are benefits of other beverages as well.
+    🟢To overcome this we complete the question with the API. So now
+    the modified query will be "Mention some benefits of Herbal Tea.".
+    Which will extract correct relevant chunks .
 ```
 7. The new query is then embedded and similarity search is performed with the query and the vectorstore.
 8. Top 5 closest chunks are retrieved and added to the query along with the chat history and as context.
