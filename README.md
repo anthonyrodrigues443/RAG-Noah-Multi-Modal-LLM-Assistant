@@ -55,13 +55,17 @@ Voice input is transcribed into text and given to the RAG Noah.
 ---------> Visual input <br>
 Visual input extracts text from visuals and asks the user to process or re click and extract text, the text extracted is then sent to the RAG Noah.
 
-6. This query goes to the API with a prompt to complete the question (if its incomplete and reffered to previous chat) and returns the new complete question.<BR><br>
-(This improves the quality of query and performs a better search within the document to retrieve context)
-
+6. This query goes to the API with a prompt to complete the question (if its incomplete and reffered to previous chat) and returns the new complete question.<BR>
+[This improves the quality of query and performs a better search within the document to retrieve context]
+```
+For eg:
+Suppose Two Documents are submitted -
+    1
+```
 7. The new query is then embedded and similarity search is performed with the query and the vectorstore.
-7. Top 5 closest chunks are retrieved and added to the query along with the chat history and as context.
-8. The new query is submitted to the GROQ API and the response is retrieved.
-9. The response is then displayed, turned to speech and autoplayed.
+8. Top 5 closest chunks are retrieved and added to the query along with the chat history and as context.
+9. The new query is submitted to the GROQ API and the response is retrieved.
+10. The response is then displayed, turned to speech and autoplayed.
 
 # Noah (LLM with Real time CV capabilities)
 
