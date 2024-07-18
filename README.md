@@ -55,7 +55,7 @@ Voice input is transcribed into text and given to the RAG Noah.
 ---------> Visual input <br>
 Visual input extracts text from visuals and asks the user to process or re click and extract text, the text extracted is then sent to the RAG Noah.
 
-6. This query goes to the API with a prompt to complete the question, if its incomplete and reffered to previous chat and returns the new complete question.<BR>
+6. This query goes to the API with a prompt to complete the question (if its incomplete and reffered to previous chat) and returns the new complete question.<BR>
 (This improves the quality of query and performs a better search within the document to retrieve context)
 
 7. The user query is then embedded and similarity search is performed with the query and the vectorstore.
