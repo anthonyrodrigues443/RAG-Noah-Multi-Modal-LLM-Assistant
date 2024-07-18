@@ -228,7 +228,7 @@ def main():
                     with c1:
                         st.markdown(link)
                     with c2:
-                        if st.button('⛔', key=f"remove_{i}"):
+                        if st.button('⛔', key=f"remove_{i}", help='Remove link'):
                             remove_single_link(i)
                             st.rerun()
                             
@@ -371,7 +371,7 @@ if __name__ == '__main__':
 
             rel_chunks = ''
             for i in range(len(chunks_)):
-                rel_chunks = rel_chunks + f'\nContext {i+1}: ' + chunks_[i].page_content
+                rel_chunks = rel_chunks + f'\nContext : ' + chunks_[i].page_content
 
             st.session_state.frontend_messages.append({"role": "user", "content": query})
             st.session_state.backend_messages.append({"role": "user", "content": new_query})
