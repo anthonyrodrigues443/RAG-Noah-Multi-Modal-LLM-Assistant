@@ -91,6 +91,7 @@ Chat history - {
 
 1. To have a fine-tuned llm for improving performance and not using API keys to scale the app .
 (Due to limitation[no GPU only CPU laptop] in resources cannot fine tune a LLM now.)
+2. To build and integrate Image captioning model to understand images as well along with text.
 
 # Noah (LLM💬 with Real time CV🔭 capabilities)
 
