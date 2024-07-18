@@ -72,10 +72,12 @@ Chat history - {
     if there are benefits of other beverages as well.
     🟢To overcome this we complete the question with the API. So now
     the modified query will be "Mention some benefits of Herbal Tea.".
-    Which will extract correct relevant chunks .
+    Which will extract the relevant chunks accurately.
+    Modified Query : Mention some benefits of Herbal Tea.
+    Assistant : Benifits of Herbal Tea are as follows :
 ```
 7. The new query is then embedded and similarity search is performed with the query and the vectorstore.
-8. Top 5 closest chunks are retrieved and added to the query along with the chat history and as context.
+8. Top 5 closest chunks are retrieved and added to the query along with the chat history  as context.
 9. The new query is submitted to the GROQ API and the response is retrieved.
 10. The response is then displayed, turned to speech and autoplayed.
 
