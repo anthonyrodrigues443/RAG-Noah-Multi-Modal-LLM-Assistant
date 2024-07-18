@@ -9,7 +9,7 @@ GROQ_API_KEYS = [st.secrets['GROQ_API_KEY1'], st.secrets['GROQ_API_KEY2'],
                  st.secrets['GROQ_API_KEY5']]
 
 def Noah_Groq1(chat_history, query, query_num): 
-    #STEP 2 : User prompt response in text
+    # This API provide the answer with Yes or No
     query_num = query_num%5
     prompt = f"""This is our previous conversation .
 Chat history : 
@@ -60,8 +60,9 @@ Answer: 1. Yes, B requires A's camera to be on to respond to this question. This
     response = chat_completion.choices[0].message.content
     return response
 
-def Noah_Groq2(chat_history, query, query_num): #STEP 2 : User prompt response in text
-    query_num = (query_num+1)%5
+def Noah_Groq2(chat_history, query, query_num): 
+    #This API provides the final response
+    query_num = (query_num+2)%5
 
     prompt = f"""This is our previous conversation .
 Chat history : 
@@ -88,10 +89,36 @@ Chat history :
         yield word + " "
         time.sleep(0.002)
 
-
-def RAG_Groq_ans(chat_history, context_chunks, query, query_num): #STEP 2 :User prompt response in text
-    # print('quesion reached here')
+def Rag_Groq1(chat_history, query, query_num):
     query_num = query_num%5
+    client = Groq(api_key=GROQ_API_KEYS[query_num])
+    prompt = f"""
+Chat history:
+{chat_history}
+
+Question: '{query}'
+
+Evaluate if the above question is incomplete or lacks context when considered alone, without the chat history. Only if the question is genuinely incomplete or unclear on its own,(Important) use the chat history to complete or clarify it. If the question is complete and clear by itself, print it unchanged.
+
+State the final question as:
+Question: "[final question here]"
+
+Explanation: [Briefly explain why you kept the question as is or how you completed it]
+"""
+    chat_completion = client.chat.completions.create(    
+    messages=[
+        {
+            "role": "user",
+            "content": f"Context :{prompt}",
+        }
+    ],
+    model='mixtral-8x7b-32768',
+    )
+    response = chat_completion.choices[0].message.content
+    return response
+
+def RAG_Groq2(chat_history, context_chunks, query, query_num): 
+    query_num = (query_num+3)%5
 
     client = Groq(api_key=GROQ_API_KEYS[query_num])
     prompt = f"""
@@ -117,41 +144,7 @@ STRICT INSTRUCTIONS:
 9. (Important)If asked about a topic that seems related but is not mentioned in the context, state that you cannot find any information about that specific topic in the given context.
 10. Use the Chat History to maintain consistency with previous answers, but do not add information beyond what's in the Context or Chat History.
 11. You are not suppose to do answer any factual/mathematical/gk or any related topic to the context but not explicitly mentioned in it questions by your own, if the answers for these type of questions is mentioned only then you provide the answer from the context (Even if the answer is wrong).
-
-Example 1:
-Context: "The sky is blue. Grass is green."
-Question: "What color is the sky?"
-Expected Response: "According to the given context, the sky is blue."
-Question: "Is the grass also blue?"
-Expected Response: "No, according to the given context, grass is green, not blue."
-
-Example 2:
-Context: "Apples are fruits that grow on trees."
-Question: "Where do apples grow?"
-Expected Response: "According to the given context, apples grow on trees."
-Question: "Are bananas also mentioned in the context?"
-Expected Response: "I don't have enough information in the given context to answer this question. The context only mentions apples and does not provide any information about bananas."
-
-Example 3:
-Context: "Python is a popular programming language."
-Question: "What is the difference between Python and JavaScript?"
-Expected Response: "I cannot answer this question as it's unrelated to the information in the given context. The context only provides information about Python and does not mention JavaScript."
-Question: "Is Python popular?"
-Expected Response: "Yes, according to the given context, Python is a popular programming language."
-
-Example 4:
-Context: "The Earth orbits around the Sun."
-Question: "What does the Earth orbit around?"
-Expected Response: "According to the given context, the Earth orbits around the Sun."
-Question: "How long does it take for the Earth to complete one orbit?"
-Expected Response: "I don't have enough information in the given context to answer this question. The context only states that the Earth orbits the Sun, but does not provide any information about the duration of the orbit."
-
-Example 5:
-Context: "Water boils at 100 degrees Celsius at sea level."
-Question: "Does this boiling point change at higher altitudes?"
-Expected Response: "I don't have enough information in the given context to answer this question. The context only provides the boiling point at sea level and does not mention how it might change at different altitudes."
-Question: "At what temperature does water boil at sea level?"
-Expected Response: "According to the given context, water boils at 100 degrees Celsius at sea level."
+12. You must not mention from which context number or chat history you are stating the response, you must use them but not reveal the way of achieving the results.
 
 Current Question: {query}
 
@@ -172,3 +165,11 @@ Answer (remember to use ONLY the provided information and follow the instruction
     for word in tokens:
         yield word + " "
         time.sleep(0.002)
+
+
+def trim_response(response):
+    match = re.search(r'Question:\s*"([^"]*)"', response)
+    if match:
+        return f'{match.group(1)}'
+    else:
+        return None

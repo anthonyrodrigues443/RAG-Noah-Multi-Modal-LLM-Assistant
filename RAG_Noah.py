@@ -15,7 +15,11 @@ from langchain_community.vectorstores import FAISS
 import speech_recognition as sr
 from gtts import gTTS
 import io
+import warnings
 print('total Time taken for imports : ',time.time()- initial)
+
+warnings.filterwarnings('ignore')
+
 
 
 # ===========================RAG PIPELINE====================================
@@ -108,7 +112,8 @@ def autoplay_tts(audio_bytes, autoplay=True):
 def clear_history():
     clear_hist = st.sidebar.button('Clear history', use_container_width=True, type='primary')
     if clear_hist :
-        st.session_state.messages.clear()
+        st.session_state.frontend_messages.clear()
+        st.session_state.backend_messages.clear()
         st.sidebar.markdown('<h1><center>History cleared</center></h1>', 
                             unsafe_allow_html=True)
 
@@ -260,8 +265,12 @@ def main():
 if __name__ == '__main__':
     if 'audio_placeholder' not in st.session_state:
         st.session_state.audio_placeholder = st.empty()
-    if "messages" not in st.session_state:
-        st.session_state.messages = []
+    if "backend_messages" not in st.session_state:
+        st.session_state.backend_messages = []
+    if "frontend_messages" not in st.session_state:
+        st.session_state.frontend_messages = []
+    if 'query_num' not in st.session_state:
+        st.session_state.query_num = 1
     if 'start_func' not in st.session_state:
         st.session_state.start_func = False
     if 'links_list' not in st.session_state:
@@ -280,17 +289,18 @@ if __name__ == '__main__':
     if vec_store is not None:
         st.session_state.vec_store = vec_store
     clear_history()
-    query_number = 0
 
     def callback():
         st.session_state.start_func = True
 
-    for message in st.session_state.messages:
+    for message in st.session_state.frontend_messages:
         if message['role'] == 'user' :
-            with st.chat_message(message['role'], avatar=user_avatar_path):
+            with st.chat_message(message['role'], 
+                                 avatar=user_avatar_path):
                 st.markdown(message['content'])
-        if message['role'] == 'assistant' :
-            with st.chat_message(message['role'], avatar=assistant_avatar_path):
+        else :
+            with st.chat_message(message['role'],
+                                avatar=assistant_avatar_path):
                 st.markdown(message['content'])
     text = None
 
@@ -329,7 +339,8 @@ if __name__ == '__main__':
         formatted_query = ''
         if query:
             formatted_query = query.replace('\n', '\n\n')
-            
+            st.session_state.query_num+=1
+
             with st.chat_message('user', avatar=user_avatar_path):
                 st.markdown(formatted_query)
             st.markdown(
@@ -344,24 +355,40 @@ if __name__ == '__main__':
                 """,
                 unsafe_allow_html=True
                 )
-            
+            ini = time.time()
+            new_query = ans_groq.Rag_Groq1(st.session_state.backend_messages,
+                                           query, st.session_state.query_num)
+            new_query = ans_groq.trim_response(new_query)
+            print('\nModified Question : ',new_query)
+            fin = time.time()
+            print('LLM 1 Response Time : ', fin-ini)
+
+            if new_query is None :
+                new_query = query 
+
             with st.spinner('Extracting information from documents'):
-                chunks_ = vec_store.similarity_search(query=formatted_query)
+                chunks_ = vec_store.similarity_search(query=new_query)
 
             rel_chunks = ''
             for i in range(len(chunks_)):
                 rel_chunks = rel_chunks + f'\nContext {i+1}: ' + chunks_[i].page_content
-            st.sidebar.write(rel_chunks)
-            st.session_state.messages.append({"role": "user", "content": query})
-            query_number +=1
+
+            st.session_state.frontend_messages.append({"role": "user", "content": query})
+            st.session_state.backend_messages.append({"role": "user", "content": new_query})
+
             with st.chat_message(name='assistant', avatar=assistant_avatar_path):
                 ini = time.time()
-                response = st.write_stream(ans_groq.RAG_Groq_ans(st.session_state.messages, rel_chunks, query, query_number))
+                response = st.write_stream(ans_groq.RAG_Groq2(st.session_state.backend_messages, rel_chunks, new_query, 
+                            st.session_state.query_num))
                 fin = time.time()
-                print('Response Time : ', fin-ini)
-                st.session_state.messages.append({"role": "assistant", "content": response})
-                audio_bytes = text_to_speech(response)
-                autoplay_tts(audio_bytes)
+                print('LLM 2 Response Time : ', fin-ini)
+                st.session_state.frontend_messages.append({"role": "assistant", "content": response})
+                st.session_state.backend_messages.append({"role": "assistant", "content": response})
+                try : 
+                    audio_bytes = text_to_speech(response)
+                    autoplay_tts(audio_bytes)
+                except Exception:
+                    st.write('Poor internet connect couldnt transcribe text to speech')
     except Exception as ex:
         st.write(ex)
         st.markdown('<h4><font color="yellow"><center>Oops! We need some PDFs as Context.', unsafe_allow_html=True)
