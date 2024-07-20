@@ -189,3 +189,10 @@ def run_concurrently(cap):
         hand_trk_res = result_queue.get()[1] if future_hand_trk.done() else "Hand tracking failed"
 
     return obj_det_res, hand_trk_res
+
+# class Games():
+#     def __init__(self) -> None:
+#         pass
+
+#     def rps(self):
+        
