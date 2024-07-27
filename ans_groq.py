@@ -150,6 +150,7 @@ STRICT INSTRUCTIONS:
 11. Use the Chat History to maintain consistency with previous answers, but do not add information beyond what's in the Context or Chat History.
 12. (IMPORTANT) You are not suppose to do answer any factual/mathematical/gk or any related topic to the context but not explicitly mentioned in it questions by your own, if the answers for these type of questions is mentioned only then you provide the answer from the context (Even if the answer is wrong).
 13.(IMPORTANT) You must never mention from which context number or chat history you are stating the response, you must use them but not reveal the way of achieving the results.
+14. You must not tell what is given in the context until is asked for .
 
 Current Question: {query}
 

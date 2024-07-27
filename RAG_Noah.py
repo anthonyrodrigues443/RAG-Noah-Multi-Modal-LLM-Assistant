@@ -304,7 +304,8 @@ if __name__ == '__main__':
         st.session_state.start_process = False
     try :
         vec_store = main()
-    except Exception :
+    except Exception as excep:
+        # st.write(excep)
         st.sidebar.markdown('Poor Internet Connection or Invalid URL ',
             unsafe_allow_html=True)
         vec_store = None
@@ -339,7 +340,9 @@ if __name__ == '__main__':
 
     ini = time.time()
     import txt_detection
+    print(time.time() - ini)
     cap = get_cap()
+    print(time.time() - ini)
     import ans_groq
     print('cv loading time : ', time.time()- ini)
 
@@ -394,8 +397,7 @@ if __name__ == '__main__':
 
             rel_chunks = ''
             for i in range(len(chunks_)):
-                rel_chunks = rel_chunks + f'\nContext : ' + chunks_[i].page_content
-
+                rel_chunks = rel_chunks + f'\n\nContext : ' + chunks_[i].page_content
             st.session_state.frontend_messages.append({"role": "user", "content": query})
             st.session_state.backend_messages.append({"role": "user", "content": new_query})
 
@@ -410,8 +412,9 @@ if __name__ == '__main__':
                 try : 
                     audio_bytes = text_to_speech(response)
                     autoplay_tts(audio_bytes)
-                except Exception:
+                except Exception as exc:
+                    # st.write(exc)
                     st.write('Poor internet connect couldnt transcribe text to speech')
     except Exception as ex:
-        st.write(ex)
+        # st.write(ex)
         st.markdown('<h4><font color="yellow"><center>Oops! We need some PDFs as Context.', unsafe_allow_html=True)

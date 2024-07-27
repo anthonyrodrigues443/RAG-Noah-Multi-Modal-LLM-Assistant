@@ -81,6 +81,11 @@ Chat history - {
 9. Prompt Engineering 2, the new query along with some instructions(alternative for fine tuning due to unavailability of computational resources [gpu]) is submitted to the GROQ Llama 3.1 API and the response is retrieved.
 10. The response is then displayed, turned to speech and autoplayed.
 
+### Why 2 APIs ? (RAG Noah)
+1. Precise Information retrieval
+2. Improves query quality
+3. User does not need to mention correct terms each query and can refer to previous ones and still extract quality results.
+
 ## Current Achievements of RAG Noah ✅
 
 1. Precise Text Retrival .
@@ -105,7 +110,7 @@ Chat history - {
 5. These detections are then added to the query as context and provided to the API 2 .
 6. Now the API 2 has the observations as context and can answer accordingly.
 
-### Why 2 API's ?
+### Why 2 API's ? (Noah)
 1. Since performing CV operations at all times can be memory consuming.
 2. Lead the app to lag and Crash eventually.
 3. Getting responses quickly as there is no extra computation.
