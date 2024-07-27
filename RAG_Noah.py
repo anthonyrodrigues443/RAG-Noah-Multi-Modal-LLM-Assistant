@@ -93,7 +93,7 @@ def get_cap():
 
 #------------------------- Autoplay Text to Speech ----------------------------
 def text_to_speech(text):
-    tts = gTTS(text=text, lang='en', slow=False)
+    tts = gTTS(text=text, lang='en', tld='us',slow=False)
     fp = io.BytesIO()
     tts.write_to_fp(fp)
     audio_bytes = fp.getvalue()
@@ -155,6 +155,17 @@ button.myButton{
     ''',
     unsafe_allow_html=True)
 
+#pdf docs styling
+st.markdown(
+    """
+<style>
+    .st-emotion-cache-13k62yr {
+        color: rgb(0, 250, 250);
+    }
+
+</style>
+""", unsafe_allow_html=True)
+
 
 #user text styling
 st.markdown(
@@ -163,6 +174,16 @@ st.markdown(
     .st-emotion-cache-janbn0 {
         text-align: left;
         background-color: #333333;
+    }
+
+</style>
+""", unsafe_allow_html=True)
+
+st.markdown(
+    """
+<style>
+    .st-emotion-cache-1sno8jx li {
+        font-size:1.1rem;
     }
 
 </style>
@@ -391,5 +412,5 @@ if __name__ == '__main__':
                 except Exception:
                     st.write('Poor internet connect couldnt transcribe text to speech')
     except Exception as ex:
-        # st.write(ex)
+        st.write(ex)
         st.markdown('<h4><font color="yellow"><center>Oops! We need some PDFs as Context.', unsafe_allow_html=True)
