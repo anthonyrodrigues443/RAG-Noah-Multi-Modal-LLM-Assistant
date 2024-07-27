@@ -95,7 +95,7 @@ Chat history :
 
 def Rag_Groq1(chat_history, query, query_num):
     query_num = query_num%5
-    client = Groq(api_key=GROQ_API_KEYS[query_num])
+    client = Groq(api_key=GROQ_API_KEYS[query_num]) 
     prompt = f"""
 Chat history:
 {chat_history}

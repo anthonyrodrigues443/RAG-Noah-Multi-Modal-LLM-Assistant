@@ -176,7 +176,7 @@ st.markdown(
         background-color: #333333;
     }
 
-</style>
+</style> 
 """, unsafe_allow_html=True)
 
 st.markdown(
