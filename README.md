@@ -1,5 +1,5 @@
-# Smart Glasses Project 😎 (Llama 3.1)
-<img src="https://1000logos.net/wp-content/uploads/2021/10/logo-Meta.png" width=100>
+# Smart Glasses Project 😎 (Llama 3.1)<img src="https://1000logos.net/wp-content/uploads/2021/10/logo-Meta.png" width=100>
+
 
 ⭐RAG Noah(RAG LLM)📚+ Noah(General LLM🌐 with capability of real time computer vision tasks🔭).  Ultimate Goal is to integrate the software in a AR glasses.
 
