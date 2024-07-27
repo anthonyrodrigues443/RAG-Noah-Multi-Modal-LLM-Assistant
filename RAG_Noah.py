@@ -118,6 +118,7 @@ def clear_history():
                             unsafe_allow_html=True)
 
 #-----------------------------Styling UI --------------------------------------
+st.set_page_config(page_title='Smart glasses', page_icon=':👓:')
 st.header("RAG Noah :eyeglasses: ", anchor=False)
 st.markdown(" <h3>(Chat with PDF's📚 and Websites🌐)", unsafe_allow_html=True)
 
