@@ -117,7 +117,7 @@ def clear_history():
         st.sidebar.markdown('<h1><center>History cleared</center></h1>', 
                             unsafe_allow_html=True)
 
-#-----------------------------Styling UI --------------------------------------
+#-----------------------------Styling UI ------------------------------------
 st.set_page_config(page_title='Smart glasses', page_icon=':👓:')
 st.header("RAG Noah :eyeglasses: ", anchor=False)
 st.markdown(" <h3>(Chat with PDF's📚 and Websites🌐)", unsafe_allow_html=True)
