@@ -40,7 +40,6 @@ streamlit run RAG_Noah.py
 # RAG Noah (PDF📖 + Website GPT🌐)
 
 ## Working of RAG Noah 🛠️
-<img src="https://github.com/Sharkytony/Smart_glasses_project/blob/main/imagefiles/rag_architecture.png">
 1) The given PDFs + Websites are read and the entire text within the document/URL is extracted and concatenated into a string.
 2) The text is further splitted into smaller chunks of text .
 3) These chunks are then embedded into vectors .
