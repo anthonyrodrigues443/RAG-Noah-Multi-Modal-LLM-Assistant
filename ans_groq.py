@@ -104,10 +104,22 @@ Question: '{query}'
 
 Evaluate if the above question is incomplete or lacks context when considered alone, without the chat history. Only if the question is genuinely incomplete or unclear on its own,(Important) use the chat history to complete or clarify it. If the question has any spelling errors just correct it or if is complete and clear by itself, print it unchanged.
 
-State the final question as:
-Question: "[final question here]"
+State your response in this template only:
+Question: "final complete question here"
 
 Explanation: [Briefly explain why you kept the question as is or how you completed it]
+
+(Your template must contain only these two things nothing other than this and in the same format as well)
+Example responses:
+Example 1 - 
+Question: "-----------"
+
+Explanation: ------------------.
+
+Example 2 -
+Question: "--------------------------"
+
+Explanation: ---------------------------------.
 """
     chat_completion = client.chat.completions.create(    
     messages=[
@@ -135,22 +147,19 @@ Context:
 {context_chunks}
 
 STRICT INSTRUCTIONS:
-1. If the user is greeting or acknowledging your previous response you do not need to refer to the context or chat history you can reply politely.
-2. Use ONLY the information from the Chat History and Context to answer the question.
-3. If the question cannot be answered using ONLY the provided information, respond with something like :
-   "I don't have enough information in the given context to answer this question." OR "Not much information available" make your replies have better vocab but the it should mean the same.
-4. Do not use any external knowledge or make any assumptions.
-5. If the question is unrelated to the context, respond with:
-   "I cannot answer this question as it's unrelated to the information in the given context."
-6. Do not answer questions about topics not explicitly covered in the provided context.
+1.Only If the user is greeting or acknowledging your previous response you do not need to refer to the context or chat history, you should reply politely  and end your responses with questions like would you like to know about this topic (from any topic provided in the context) dont repeat the same questions in your responses(you can use the chat history to refer to previous questions you gave).
+2. Use ONLY the information from the Chat History and Context to answer the question, do not use any external knowledge or make any assumptions.
+3. Do not to answer any factual/mathematical/gk or any related topic to the context but not explicitly mentioned.
+4. Do not ever mention from which context number or chat history you are stating the response, you must use them but not reveal the way of achieving the results.
+5. Do not tell what is given in the context until is asked for .
+6. If the question is irrelevant to the context and chat history, and cannot be answered using ONLY the provided information, respond with phrases like :
+    A. "I don't have enough information in the given context to answer this topic(here the topic should be replace by the non contextual question of user)"
+    or  
+    B. "I cannot answer this question as it's unrelated to the information in the given context."
+and if you use one of this then in next response where you cannot answer then use different option .
 7. If asked about your capabilities or information source, only refer to the given context.
-8. Do not speculate on information that might be related but is not explicitly stated in the context.
-9. Stick strictly to the content provided. Do not infer or extrapolate information beyond what is explicitly stated.
-10. (Important)If asked about a topic that seems related but is not mentioned in the context, state that you cannot find any information about that specific topic in the given context.
-11. Use the Chat History to maintain consistency with previous answers, but do not add information beyond what's in the Context or Chat History.
-12. (IMPORTANT) You are not suppose to do answer any factual/mathematical/gk or any related topic to the context but not explicitly mentioned in it questions by your own, if the answers for these type of questions is mentioned only then you provide the answer from the context (Even if the answer is wrong).
-13.(IMPORTANT) You must never mention from which context number or chat history you are stating the response, you must use them but not reveal the way of achieving the results.
-14. You must not tell what is given in the context until is asked for .
+8. Use the Chat History to maintain consistency with previous answers, but do not add information beyond what's in the Context or Chat History.
+9. Use clean formatting(tabs/new lines/indentation/bullet points)on your responses.
 
 Current Question: {query}
 
@@ -162,7 +171,7 @@ Answer (remember to use ONLY the provided information and follow the instruction
                 "content": f"Context :{prompt}",
             }
         ],
-        model='llama-3.1-8b-instant',
+        model='llama-3.1-70b-versatile',
     )
     response = chat_completion.choices[0].message.content
 
@@ -171,14 +180,3 @@ Answer (remember to use ONLY the provided information and follow the instruction
     for word in tokens:
         yield word + " "
         time.sleep(0.002)
-
-
-def trim_response(response):
-    match = re.search(r'Question:\s*"([^"]*)"', response)
-    
-    if match is None:
-        match = re.search(r"""Question:\s*'([^"]*)'""", response)
-    if match:
-        return f'{match.group(1)}'
-    else:
-        return None

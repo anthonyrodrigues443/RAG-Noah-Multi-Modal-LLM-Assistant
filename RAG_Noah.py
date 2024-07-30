@@ -86,19 +86,19 @@ def get_vectorstore(chunks):
     return vectorstore
 
 
-#----------------------- Reading Camera for Text Extraction --------------------
+#-------------------- Reading Camera for Text Extraction --------------------
 @st.cache_resource(show_spinner=False)
 def get_cap():
     return cv2.VideoCapture(0)
 
-#------------------------- Autoplay Text to Speech ----------------------------
+#----------------------- Autoplay Text to Speech ----------------------------
 def text_to_speech(text):
     tts = gTTS(text=text, lang='en', tld='us',slow=False)
     fp = io.BytesIO()
     tts.write_to_fp(fp)
     audio_bytes = fp.getvalue()
     return audio_bytes
-  
+
 def autoplay_tts(audio_bytes, autoplay=True):
     b64 = base64.b64encode(audio_bytes).decode()
     md = f"""
@@ -130,7 +130,7 @@ st.markdown(
     [data-testid="stChatMessageContent"] * {
         font-size: 1.1rem;
         padding: 1px;
-        margin: 0px;
+        margin: 0px;        
     }
     </style>
     """, unsafe_allow_html=True
@@ -229,39 +229,31 @@ user_avatar_path = "imagefiles/user_avatar.png"
 assistant_avatar_path = "imagefiles/assistant_avatar.png"
 
 #------------------------ Running of RAG ------------------------------------
-def main():
-    if st.session_state.clear_links:
-        st.session_state.links_list.clear()
-        st.session_state.clear_links = False
+def main(files, link):
+    if link:
+        if not link.startswith('https://'):
+            link = 'https://' + link
+        if link not in st.session_state.links_list:
+            st.session_state.links_list.append(link)
+    if len(st.session_state.links_list) > 0:
+        with st.sidebar:
+            c1, c2 = st.columns([0.85, 0.15], vertical_alignment='center')
+            for i, link in enumerate(st.session_state.links_list):
+                with c1:
+                    st.markdown(link)
+                with c2:
+                    if st.button('⛔', key=f"remove_{i}", help='Remove link'):
+                        remove_single_link(i)
+                        st.rerun()
+
+            c1, c2 = st.columns([0.3, 0.7])
+            with c2:
+                clear_links = st.button('Clear all links', on_click=clear_all_links)
 
     with st.sidebar:
-        st.markdown('<h1><center>Your docs </center></h1>', unsafe_allow_html=True)
-        files = st.file_uploader(label="Upload docs",accept_multiple_files=True, label_visibility='hidden')
-        st.markdown('<h1><center>Provide website links </center></h1>', unsafe_allow_html=True)
-        link = st.sidebar.chat_input('Paste the link')
-        if link:
-            if not link.startswith('https://'):
-                link = 'https://' + link
-            if link not in st.session_state.links_list:
-                st.session_state.links_list.append(link)
-        if len(st.session_state.links_list) > 0:
-            with st.sidebar:
-                c1, c2 = st.columns([0.85, 0.15], vertical_alignment='center')
-                for i, link in enumerate(st.session_state.links_list):
-                    with c1:
-                        st.markdown(link)
-                    with c2:
-                        if st.button('⛔', key=f"remove_{i}", help='Remove link'):
-                            remove_single_link(i)
-                            st.rerun()
-                            
-                c1, c2 = st.columns([0.3, 0.7])
-                with c2:
-                    clear_links = st.button('Clear all links', on_click=clear_all_links)
-
         if st.button('Process', use_container_width=True, type='primary', on_click=start_processing):
             if len(files) == 0 and len(st.session_state.links_list)==0:
-                st.markdown('<h1><center>No file detected', unsafe_allow_html=True)
+                st.sidebar.markdown('<h1><center>No file detected', unsafe_allow_html=True)
             else : 
                 with st.spinner("Processing"):
                     pdf_text = None
@@ -302,12 +294,22 @@ if __name__ == '__main__':
         st.session_state.clear_links = False
     if 'start_process' not in st.session_state:
         st.session_state.start_process = False
+
+    if st.session_state.clear_links:
+        st.session_state.links_list.clear()
+        st.session_state.clear_links = False
+
+    with st.sidebar:
+        st.markdown('<h1><center>Your docs </center></h1>', unsafe_allow_html=True)
+        files = st.file_uploader(label="Upload docs",accept_multiple_files=True, label_visibility='collapsed')
+        st.markdown('<h1><center>Provide website links </center></h1>', unsafe_allow_html=True)
+        link = st.sidebar.chat_input('Paste the link')
+    
     try :
-        vec_store = main()
-    except Exception as excep:
-        # st.write(excep)
-        st.sidebar.markdown('Poor Internet Connection or Invalid URL ',
-            unsafe_allow_html=True)
+        vec_store = main(files, link)
+    except Exception as exc:
+        # print(exc)
+        st.sidebar.markdown('<center><font color="white">Poor internet connection or Invalid URL', unsafe_allow_html=True)
         vec_store = None
 
     if vec_store is not None:
@@ -340,9 +342,7 @@ if __name__ == '__main__':
 
     ini = time.time()
     import txt_detection
-    print(time.time() - ini)
     cap = get_cap()
-    print(time.time() - ini)
     import ans_groq
     print('cv loading time : ', time.time()- ini)
 
@@ -384,7 +384,10 @@ if __name__ == '__main__':
             ini = time.time()
             new_query = ans_groq.Rag_Groq1(st.session_state.backend_messages,
                                            query, st.session_state.query_num)
-            new_query = ans_groq.trim_response(new_query)
+            print(new_query)
+            new_query = new_query.splitlines()[0][11:-1]
+            if new_query is None:
+                new_query = query
             print('\nModified Question : ',new_query)
             fin = time.time()
             print('LLM 1 Response Time : ', fin-ini)
@@ -397,7 +400,7 @@ if __name__ == '__main__':
 
             rel_chunks = ''
             for i in range(len(chunks_)):
-                rel_chunks = rel_chunks + f'\n\nContext : ' + chunks_[i].page_content
+                rel_chunks = rel_chunks + f'\n\nContext {i+1} : ' + chunks_[i].page_content
             st.session_state.frontend_messages.append({"role": "user", "content": query})
             st.session_state.backend_messages.append({"role": "user", "content": new_query})
 
