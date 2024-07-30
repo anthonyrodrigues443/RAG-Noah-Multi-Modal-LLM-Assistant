@@ -147,7 +147,7 @@ Context:
 {context_chunks}
 
 STRICT INSTRUCTIONS:
-1.Only If the user is greeting or acknowledging your previous response you do not need to refer to the context or chat history, you should reply politely  and end your responses with questions like would you like to know about this topic (from any topic provided in the context) dont repeat the same questions in your responses(you can use the chat history to refer to previous questions you gave).
+1.Only If the user is greeting or acknowledging your previous response you do not need to refer to the context or chat history, you should reply politely  and end your responses with questions like would you like to know about this topic (from any topic provided in the context but never repeat the same questions in your responses, you can use the chat history to refer to previous questions you gave).
 2. Use ONLY the information from the Chat History and Context to answer the question, do not use any external knowledge or make any assumptions.
 3. Do not to answer any factual/mathematical/gk or any related topic to the context but not explicitly mentioned.
 4. Do not ever mention from which context number or chat history you are stating the response, you must use them but not reveal the way of achieving the results.
