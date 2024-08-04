@@ -385,7 +385,7 @@ if __name__ == '__main__':
             new_query = ans_groq.Rag_Groq1(st.session_state.backend_messages,
                                            query, st.session_state.query_num)
             print(new_query)
-            new_query = new_query.splitlines()[0][11:-1]
+            new_query = new_query.split('Explanation:')[0][11:-1]
             if new_query is None:
                 new_query = query
             print('\nModified Question : ',new_query)
