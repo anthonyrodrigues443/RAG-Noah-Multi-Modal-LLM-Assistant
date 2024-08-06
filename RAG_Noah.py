@@ -381,6 +381,8 @@ if __name__ == '__main__':
                 """,
                 unsafe_allow_html=True
                 )
+            # For raising error to avoid exhaustion of API 
+            temporary = vec_store.similarity_search(query=query)
             ini = time.time()
             new_query = ans_groq.Rag_Groq1(st.session_state.backend_messages,
                                            query, st.session_state.query_num)
@@ -420,4 +422,4 @@ if __name__ == '__main__':
                     st.write('Poor internet connect couldnt transcribe text to speech')
     except Exception as ex:
         # st.write(ex)
-        st.markdown('<h4><font color="yellow"><center>Oops! We need some PDFs as Context.', unsafe_allow_html=True)
+        st.markdown('<h4><font color="yellow"><center>Oops! We need some PDFs/ Websites as Context.', unsafe_allow_html=True)

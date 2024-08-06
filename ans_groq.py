@@ -102,7 +102,7 @@ Chat history:
 
 Question: '{query}'
 
-Evaluate if the above question is incomplete or lacks context when considered alone, without the chat history. Only if the question is genuinely incomplete or unclear on its own,(Important) use the chat history to complete or clarify it. If the question has any spelling errors just correct it or if is complete and clear by itself, print it unchanged.
+Evaluate if the above question is incomplete or lacks context when considered alone, without the chat history. Only if the question is genuinely incomplete or unclear on its own,(Important) use the chat history to complete or clarify it. If the question has any spelling errors just correct it or if is complete and clear by itself, print it unchanged. You are not supposed to answer the question.
 
 State your response in this template only:
 Question: "final complete question here"
@@ -160,6 +160,7 @@ and if you use one of this then in next response where you cannot answer then us
 7. If asked about your capabilities or information source, only refer to the given context.
 8. Use the Chat History to maintain consistency with previous answers, but do not add information beyond what's in the Context or Chat History.
 9. Use clean formatting(tabs/new lines/indentation/bullet points)on your responses.
+10. Never use your knowledge base to answer any question .
 
 Current Question: {query}
 
