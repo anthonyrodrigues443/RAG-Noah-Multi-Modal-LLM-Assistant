@@ -6,7 +6,9 @@ import re
 
 GROQ_API_KEYS = [st.secrets['GROQ_API_KEY1'], st.secrets['GROQ_API_KEY2'],
                  st.secrets['GROQ_API_KEY3'], st.secrets['GROQ_API_KEY4'],
-                 st.secrets['GROQ_API_KEY5']]
+                 st.secrets['GROQ_API_KEY5'], st.secrets['GROQ_API_KEY6'],
+                 st.secrets['GROQ_API_KEY7'], st.secrets['GROQ_API_KEY8'],
+                 st.secrets['GROQ_API_KEY9'], st.secrets['GROQ_API_KEY10']]
 
 def Noah_Groq1(chat_history, query, query_num): 
     # This API provide the answer with Yes or No
@@ -62,7 +64,7 @@ Answer: 1. Yes, B requires A's camera to be on to respond to this question. This
 
 def Noah_Groq2(chat_history, query, query_num): 
     #This API provides the final response
-    query_num = (query_num+2)%5
+    query_num = (query_num+5)%5
 
     prompt = f"""This is our previous conversation .
 Chat history : 
@@ -134,7 +136,7 @@ Explanation: ---------------------------------.
     return response
 
 def RAG_Groq2(chat_history, context_chunks, query, query_num): 
-    query_num = (query_num+3)%5
+    query_num = (query_num+5)%5
 
     client = Groq(api_key=GROQ_API_KEYS[query_num])
     prompt = f"""
