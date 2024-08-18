@@ -9,6 +9,3 @@ __pycache__/
 
 #model
 *.pt
-
-# word embedding model updation
-new.py

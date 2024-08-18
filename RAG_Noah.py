@@ -278,8 +278,6 @@ def main(files, link):
 
 #----------------------- Logic of the webapp -------------------------------
 if __name__ == '__main__':
-    # if 'RAG_type' not in st.session_state:
-    #     st.session_state.RAG_type = "RAG + General GPT"
     if 'audio_placeholder' not in st.session_state:
         st.session_state.audio_placeholder = st.empty()
     if "backend_messages" not in st.session_state:
@@ -302,11 +300,10 @@ if __name__ == '__main__':
         st.session_state.clear_links = False
 
     with st.sidebar:
-        # st.radio(label='RAG type', options=['RAG + General GPT', 'Strict RAG'], captions=['Blend context and AI knowledge', 'Answer only document-related queries'])
         st.markdown('<h1><center>Your docs </center></h1>', unsafe_allow_html=True)
         files = st.file_uploader(label="Upload docs",accept_multiple_files=True, label_visibility='collapsed')
         st.markdown('<h1><center>Provide website links </center></h1>', unsafe_allow_html=True)
-        link = st.sidebar.chat_input('Paste the link')
+        link = st.chat_input('Paste the link')
     
     try :
         vec_store = main(files, link)
