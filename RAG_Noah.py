@@ -308,7 +308,7 @@ if __name__ == '__main__':
     try :
         vec_store = main(files, link)
     except Exception as exc:
-        # print(exc)
+        print(exc)
         st.sidebar.markdown('<center><font color="white">Poor internet connection or Invalid URL', unsafe_allow_html=True)
         vec_store = None
 
@@ -418,8 +418,8 @@ if __name__ == '__main__':
                     audio_bytes = text_to_speech(response)
                     autoplay_tts(audio_bytes)
                 except Exception as exc:
-                    # st.write(exc)
+                    print(exc)
                     st.write('Poor internet connect couldnt transcribe text to speech')
     except Exception as ex:
-        # st.write(ex)
+        print(ex)
         st.markdown('<h4><font color="yellow"><center>Oops! We need some PDFs/ Websites as Context.', unsafe_allow_html=True)
