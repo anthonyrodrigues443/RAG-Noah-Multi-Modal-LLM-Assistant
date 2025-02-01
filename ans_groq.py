@@ -10,7 +10,18 @@ GROQ_API_KEYS = [st.secrets['GROQ_API_KEY1'], st.secrets['GROQ_API_KEY2'],
                  st.secrets['GROQ_API_KEY7'], st.secrets['GROQ_API_KEY8'],
                  st.secrets['GROQ_API_KEY9'], st.secrets['GROQ_API_KEY10']]
 
-def Noah_Groq1(chat_history, query, query_num): 
+client = Groq(api_key=GROQ_API_KEYS[9])
+models = client.models.list()
+
+ragnoah2_model = ""
+for model in client.models.list().data:
+    if (('llama' in model.id) and ('70b-versatile' in model.id)):
+        ragnoah2_model = model.id
+        break
+
+noah_model='llama3-70b-8192'
+
+def Noah_Groq1(chat_history, query, query_num, noah_model=noah_model): 
     # This API provide the answer with Yes or No
     query_num = query_num%5
     prompt = f"""This is our previous conversation .
@@ -57,12 +68,12 @@ Answer: 1. Yes, B requires A's camera to be on to respond to this question. This
                 "content": f"{prompt}",
             }
         ],
-        model='llama3-70b-8192',
+        model=noah_model,
     )
     response = chat_completion.choices[0].message.content
     return response
 
-def Noah_Groq2(chat_history, query, query_num): 
+def Noah_Groq2(chat_history, query, query_num, noah_model=noah_model): 
     #This API provides the final response
     query_num = (query_num+5)%5
 
@@ -80,7 +91,7 @@ Chat history :
                 "content": f"{prompt}",
             }
         ],
-        model='llama3-70b-8192',
+        model=noah_model,
     )
 
     response = chat_completion.choices[0].message.content
@@ -95,7 +106,7 @@ Chat history :
 
 #----- Generating a Precise quesiton To Improve query quality -----------
 
-def Rag_Groq1(chat_history, query, query_num):
+def Rag_Groq1(chat_history, query, query_num, ragnoah1_model='mixtral-8x7b-32768'):
     query_num = query_num%5
     client = Groq(api_key=GROQ_API_KEYS[query_num]) 
     prompt = f"""
@@ -130,12 +141,12 @@ Explanation: ---------------------------------.
             "content": f"Context :{prompt}",
         }
     ],
-    model='mixtral-8x7b-32768',
+    model=ragnoah1_model,
     )
     response = chat_completion.choices[0].message.content
     return response
 
-def RAG_Groq2(chat_history, context_chunks, query, query_num): 
+def RAG_Groq2(chat_history, context_chunks, query, query_num, ragnoah2_model=ragnoah2_model): 
     query_num = (query_num+5)%5
 
     client = Groq(api_key=GROQ_API_KEYS[query_num])
@@ -163,10 +174,10 @@ and if you use one of this then in next response where you cannot answer then us
 8. Use the Chat History to maintain consistency with previous answers, but do not add information beyond what's in the Context or Chat History.
 9. Use clean formatting(tabs/new lines/indentation/bullet points)on your responses.
 10. Never use your knowledge base to answer any question .
-
 Current Question: {query}
 
 Answer (remember to use ONLY the provided information and follow the instructions above):"""
+
     chat_completion = client.chat.completions.create(    
         messages=[
             {
@@ -174,8 +185,9 @@ Answer (remember to use ONLY the provided information and follow the instruction
                 "content": f"Context :{prompt}",
             }
         ],
-        model='llama-3.1-70b-versatile',
+        model=ragnoah2_model,
     )
+
     response = chat_completion.choices[0].message.content
 
     tokens = re.findall(r'\S+|\n|\t', response)
