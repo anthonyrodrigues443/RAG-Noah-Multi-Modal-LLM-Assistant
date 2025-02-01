@@ -13,7 +13,7 @@ from collections import Counter
 warnings.filterwarnings('ignore')
 
 def object_detection(cap, frame_queue, result_queue):
-    model = YOLO('yolov10n.pt')
+    model = YOLO('yolov8n.pt')
     class_names = list(model.names.values())
     detections = []
     first_frame = True
@@ -32,21 +32,18 @@ def object_detection(cap, frame_queue, result_queue):
                 w, h = x2 - x1, y2 - y1
                 cvzone.cornerRect(img, (x1, y1, w, h))
 
-                # Confidence
                 conf = float(box.conf[0])
 
-                # Class Labels
                 cls = int(box.cls[0])
                 class_name = class_names[cls]
 
-                # Add detection to list
                 detection = {
                     "class_name": class_name,
                     "confidence": conf,
                     "bounding_box": [x1, y1, x2, y2]
                 }
                 detections.append(detection)
-                # Display class name
+
                 cvzone.putTextRect(img, f'{class_name} {conf:.2f}', (max(0, x1), max(35, y1)), scale=1, thickness=1)
 
         rgb_frame = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
