@@ -10,7 +10,7 @@ import warnings
 import io
 print('total Time taken for imports : ',time.time()- initial)
 
-warnings.filterwarnings('ignore')
+# warnings.filterwarnings('ignore')
 
 #-------------------------Accessing Camera-----------------------------------
 @st.cache_resource(show_spinner=False)
