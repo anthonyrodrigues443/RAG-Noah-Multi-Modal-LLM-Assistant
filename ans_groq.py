@@ -13,6 +13,13 @@ GROQ_API_KEYS = [st.secrets['GROQ_API_KEY1'], st.secrets['GROQ_API_KEY2'],
 client = Groq(api_key=GROQ_API_KEYS[9])
 models = client.models.list()
 
+ragnoah1_model = ""
+for model in client.models.list().data:
+    if ('gemma' in model.id) :
+        ragnoah1_model = model.id
+        break
+
+
 ragnoah2_model = ""
 for model in client.models.list().data:
     if (('llama' in model.id) and ('70b-versatile' in model.id)):
@@ -106,7 +113,7 @@ Chat history :
 
 #----- Generating a Precise quesiton To Improve query quality -----------
 
-def Rag_Groq1(chat_history, query, query_num, ragnoah1_model='mixtral-8x7b-32768'):
+def Rag_Groq1(chat_history, query, query_num, ragnoah1_model=ragnoah1_model):
     query_num = query_num%5
     client = Groq(api_key=GROQ_API_KEYS[query_num]) 
     prompt = f"""
