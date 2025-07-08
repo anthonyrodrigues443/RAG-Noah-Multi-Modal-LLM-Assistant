@@ -1,128 +1,169 @@
-# Smart Glasses Project 😎 (<img src="https://1000logos.net/wp-content/uploads/2021/10/logo-Meta.png" width=50> Llama 3.1)
+# RAG-Noah - Multi-Modal LLM Assistant 🤖
 
+**A comprehensive RAG (Retrieval Augmented Generation) system built with LLaMA 3.1 for organizations to embed their data and help clients extract relevant information efficiently.**
 
-⭐RAG Noah(RAG LLM)📚+ Noah(General LLM🌐 with capability of real time computer vision tasks🔭).  Ultimate Goal is to integrate the software in a AR glasses.
+## 🚀 Live Demo
+**Test the webapp now:** https://rag-noah.streamlit.app/
 
-The RAG LLM can also be integrated into websites where the data of the businesses/institutions is provided as static information and users can access all the essential information at one place.
+*Note: Camera features are available in local setup only due to web deployment limitations.*
 
-## You can test the webapp now !!
-Link For <u>RAG Noah and Noah</u> : https://rag-noah.streamlit.app/<br>
-Note - the camera features are not available online as there is no successful module to access live client cam and send the live feed frames to the python code.<br>
-(If you do know how to do it you can dm me on My <a href="https://www.linkedin.com/in/anthonyrodrigues443">LinkedIn</a>)
+## 📋 Project Overview
 
-## How to run locally
-1. Open the terminal 
-2. Navigate to the directory you want to run the code.
-```
+RAG-Noah is a multi-modal intelligent assistant that combines:
+- **RAG LLM**: For accurate information retrieval from organizational data
+- **General LLM**: With real-time computer vision capabilities for enhanced user interaction
+
+Perfect for organizations looking to embed their data (policies, procedures, FAQs) and provide clients with instant access to relevant information like cutoffs, booking procedures, and institutional guidelines.
+
+## 🛠️ Tech Stack
+
+- **Language**: Python
+- **Framework**: Streamlit
+- **LLM**: LLaMA 3.1 (via GROQ API)
+- **Vector Database**: ChromaDB
+- **Embeddings**: HuggingFace Transformers
+- **Computer Vision**: OpenCV
+- **Speech Processing**: SpeechRecognition, gTTS
+
+## 🏃‍♂️ Quick Start
+
+### Prerequisites
+- Python 3.8+
+- GROQ API key
+
+### Installation
+
+1. **Clone the repository**
+```bash
 git clone https://github.com/Sharkytony/Smart_glasses_project.git
+cd Smart_glasses_project
 ```
-3. Once the repo is cloned Navigate the Smart_Glasses_Project directory
-4. Create a virtual environment
+
+2. **Create virtual environment**
+```bash
+python -m venv venv
 ```
-python -m venv your_venv_name
+
+3. **Activate virtual environment**
+```bash
+# Windows
+venv\Scripts\activate
+# macOS/Linux
+source venv/bin/activate
 ```
-5. Activate your virtual environment
-```
-your_venv_name/Scripts/activate
-```
-6. Install the requirements
-```
+
+4. **Install dependencies**
+```bash
 pip install -r requirements.txt
 ```
-7. Rename the secrets_eg.toml to secrets.toml and setup your API keys for GROQ.
 
-8. Finally run 
+5. **Configure API keys**
+```bash
+# Rename secrets_eg.toml to secrets.toml
+# Add your GROQ API key
 ```
+
+6. **Run the application**
+```bash
 streamlit run RAG_Noah.py
 ```
 
+## 🎯 Core Features
 
-# RAG Noah (PDF📖 + Website GPT🌐)
+### RAG-Noah (Document Intelligence)
 
-## Working of RAG Noah 🛠️
-1) The given PDFs + Websites are read and the entire text within the document/URL is extracted and concatenated into a string.
-2) The text is further splitted into smaller chunks of text .
-3) These chunks are then embedded into vectors .
-4) The embeddings are then stored in a vectorstore .
-5) User Query 
+**Multi-Source Data Integration**
+- PDF document processing and text extraction
+- Website content scraping and indexing
+- Database integration for organizational data
 
----------> Text input<br>
-Plain text is directly given to the RAG Noah.
+**Advanced Query Processing**
+- Text input with natural language understanding
+- Voice input with speech-to-text conversion
+- Visual input with text extraction from images
 
----------> Voice input  
-Voice input is transcribed into text and given to the RAG Noah.
+**Intelligent Information Retrieval**
+- Vector-based similarity search
+- Context-aware query completion using chat history
+- Top-k relevant chunk retrieval for accurate responses
 
----------> Visual input <br>
-Visual input extracts text from visuals and asks the user to process or re click and extract text, the text extracted is then sent to the RAG Noah.
+**Enhanced User Experience**
+- Real-time response generation
+- Text-to-speech output
+- Conversation history maintenance
 
-6. Prompt Engineering, the raw query goes to the API with a prompt to complete the question (if its incomplete and reffered to previous chat) and returns the new complete question.<BR>
-[This improves the quality of query and performs a better search within the document to retrieve context]
-```
-For eg:
-Suppose a document is submitted -
-    1. Containing Different types of Beverages .
-    
-Chat history - { 
-    User : What is Herbal tea ? 
-    Assistant : Herbal tea info....
-    
-    User : mention some benefits of it . 
-    🟢If similarity search is performed on this query it may or may not be able to extract the
-    benefits of 'Herbal Tea' specifically, if there are benefits of other beverages as well.
-    🟢To overcome this we complete the question by submitting chat history along with the query in a
-    template to the API. So now the modified query will be "Mention some benefits of Herbal Tea.".
-    Which will extract the relevant chunks accurately.
-    Modified Query : Mention some benefits of Herbal Tea.
-    Assistant : Benifits of Herbal Tea are as follows :
-```
-7. The new query is then embedded and similarity search is performed with the query and the vectorstore.
-8. Top 5 closest chunks are retrieved and added to the query along with the chat history  as context.
-9. Prompt Engineering 2, the new query along with some instructions(alternative for fine tuning due to unavailability of computational resources [gpu]) is submitted to the GROQ Llama 3.1 API and the response is retrieved.
-10. The response is then displayed, turned to speech and autoplayed.
+### Noah (Multi-Modal Assistant)
 
-### Why 2 APIs ? (RAG Noah)
-1. Precise Information retrieval
-2. Improves query quality
-3. User does not need to mention correct terms each query and can refer to previous ones and still extract quality results.
+**Computer Vision Capabilities**
+- Real-time object detection
+- Hand tracking and gesture recognition
+- Finger counting with detailed finger identification
 
-## Current Achievements of RAG Noah ✅
+**Adaptive Processing**
+- Intelligent query classification (visual/non-visual)
+- Conditional computer vision activation for optimal performance
+- Multi-modal input processing
 
-1. Precise Text Retrival .
-2. PDF's + Website's RAG at the same time .
-3. Cannot Jailbreak because of strong prompting .
-4. Can be easily integrated into any webpage .
+## 🔧 Technical Architecture
 
-## Future Goals for RAG Noah🚀
+### RAG Pipeline
+1. **Document Processing**: Extract and concatenate text from PDFs and websites
+2. **Text Chunking**: Split content into manageable, semantically meaningful chunks
+3. **Vector Embeddings**: Convert text chunks into high-dimensional vectors
+4. **Vector Storage**: Store embeddings in ChromaDB for efficient retrieval
+5. **Query Enhancement**: Complete incomplete queries using conversation context
+6. **Similarity Search**: Find most relevant chunks using vector similarity
+7. **Response Generation**: Generate contextual responses using LLaMA 3.1
 
-1. To have a fine-tuned llm for improving performance and not using API keys to scale the app .
-(Due to limitation[no GPU only CPU laptop] in resources cannot fine tune a LLM now.)
-2. To build and integrate Image captioning model to understand images as well along with text.
+### Dual-API Architecture
+- **API 1**: Query classification and context completion
+- **API 2**: Final response generation with enhanced context
 
-# Noah (LLM💬 with Real time CV🔭 capabilities)
+This approach ensures:
+- Precise information retrieval
+- Improved query quality through context awareness
+- Efficient resource utilization
 
-## Working of Noah 🛠️
+## 🎨 Use Cases
 
-1. Three types of user query is accepted even here ( Speech + Text + Visual ).
-2. The user query is given to the Groq API 1 which takes the input along with a scenario as a prompt template and restricted to give answer within the two options(Visual information needed/Visual information not needed) given in the prompt only .
-3. The API 1 then gives the response accordingly selecting one of the two options.
-4. If the option "Visual response needed" is in the response object detection and hand tracking is performed and the detections are listed .
-5. These detections are then added to the query as context and provided to the API 2 .
-6. Now the API 2 has the observations as context and can answer accordingly.
+### For Organizations
+- **Customer Support**: Instant access to policy information, procedures, and FAQs
+- **Employee Training**: Quick retrieval of training materials and guidelines
+- **Knowledge Management**: Centralized access to organizational knowledge base
 
-### Why 2 API's ? (Noah)
-1. Since performing CV operations at all times can be memory consuming.
-2. Lead the app to lag and Crash eventually.
-3. Getting responses quickly as there is no extra computation.
+### For Educational Institutions
+- **Student Queries**: Information about admission cutoffs, booking procedures
+- **Academic Support**: Course materials and curriculum information
+- **Administrative Assistance**: Policy and procedure clarification
 
-## Current Achievements of Noah ✅
+## 🔐 Security & Reliability
 
-1. It can detect hands
-2. Objects in your hands
-3. Count the number of hands you show including the fingers with the finger names as well.
+- **Robust Prompting**: Prevents jailbreaking attempts
+- **Data Privacy**: Secure handling of organizational data
+- **Error Handling**: Comprehensive error management for stable operation
 
-## Future Goals for Noah 🚀
+## 📊 Performance Highlights
 
-1. Image captioning - to be able to caption the real time views .
-2. Image generator - to be able to enhance pictures in real time .
-3. To be able to play games (Rock-paper-scissors, etc)
+- **Accurate Retrieval**: Context-aware information extraction
+- **Fast Response**: Optimized vector search for quick results
+- **Scalable**: Easy integration into existing web applications
+- **Multi-Modal**: Support for text, voice, and visual inputs
 
+## 🛣️ Future Enhancements
+
+- **Fine-tuned LLM**: Custom model training for domain-specific improvements
+- **Image Understanding**: Advanced image captioning and analysis
+- **Enhanced Integration**: Extended database connectivity options
+- **Real-time Collaboration**: Multi-user support with shared knowledge bases
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit issues and enhancement requests.
+
+## 📧 Contact
+
+For questions or collaboration opportunities, connect with me on [LinkedIn](https://www.linkedin.com/in/anthonyrodrigues443).
+
+---
+
+*Built with ❤️ for efficient organizational knowledge management*
