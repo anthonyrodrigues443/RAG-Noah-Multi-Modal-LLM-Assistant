@@ -13,13 +13,14 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 import speech_recognition as sr
+# from transformers import AutoModelForSequenceClassification
+# from sentence_transformers import CrossEncoder  
 from gtts import gTTS
 import io
 import warnings
 print('total Time taken for imports : ',time.time()- initial)
 
 warnings.filterwarnings('ignore')
-
 
 
 # ===========================RAG PIPELINE====================================
@@ -85,6 +86,26 @@ def get_vectorstore(chunks):
     print('vectorstore : ', time.time()-ini)
     return vectorstore
 
+#-----------------Reranking chunks------------
+
+# @st.cache_resource(show_spinner=False)
+# def load_reranker():
+#     reranker_model = CrossEncoder("BAAI/bge-reranker-base", device="cpu")
+#     return reranker_model
+
+# def rerank_chunks(query, chunks, top_k):
+#     ini = time.time()
+#     reranker_model = load_reranker()
+    
+#     texts = [chunk.page_content for chunk in chunks]
+#     sentence_pairs = [[query, text] for text in texts]
+    
+#     reranker_results = reranker_model.predict(sentence_pairs, batch_size=32, show_progress_bar=False)
+#     combined = list(zip(chunks, reranker_results))
+
+#     top_chunks = [chunk for chunk, score in sorted(combined, key=lambda x: x[1], reverse=True)[:top_k]]
+#     print('Reranking time : ', time.time() - ini)
+#     return top_chunks
 
 #-------------------- Reading Camera for Text Extraction --------------------
 @st.cache_resource(show_spinner=False)
@@ -118,7 +139,7 @@ def clear_history():
                             unsafe_allow_html=True)
 
 #-----------------------------Styling UI ------------------------------------
-st.set_page_config(page_title='Smart glasses', page_icon=':👓:')
+st.set_page_config(page_title='RAG Noah', page_icon=':👓:')
 st.header("RAG Noah :eyeglasses: ", anchor=False)
 st.markdown(" <h3>(Chat with PDF's📚 and Websites🌐)", unsafe_allow_html=True)
 
@@ -398,7 +419,8 @@ if __name__ == '__main__':
                 new_query = query 
 
             with st.spinner('Extracting information from documents'):
-                chunks_ = vec_store.similarity_search(query=new_query)
+                chunks_ = vec_store.similarity_search(query=new_query, k=4)
+                # reranked_chunks = rerank_chunks(query=new_query, chunks=chunks_, top_k=4 )
 
             rel_chunks = ''
             for i in range(len(chunks_)):
