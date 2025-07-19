@@ -256,4 +256,8 @@ Now, provide your response to the current question following these guidelines:""
     )
 
     response = chat_completion.choices[0].message.content
-    return response
+    tokens = re.findall(r'\S+|\n|\t', response)
+
+    for word in tokens:
+        yield word + " "
+        time.sleep(0.002)
