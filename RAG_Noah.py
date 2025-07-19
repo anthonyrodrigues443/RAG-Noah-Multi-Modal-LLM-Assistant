@@ -328,6 +328,9 @@ if __name__ == '__main__':
     
     try :
         vec_store = main(files, link)
+    except TypeError :
+        st.sidebar.markdown('<center><font color="white">The given pdf does not contain any text', unsafe_allow_html=True)
+        vec_store = None
     except Exception as exc:
         print(exc)
         st.sidebar.markdown('<center><font color="white">Poor internet connection or Invalid URL', unsafe_allow_html=True)
