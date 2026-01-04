@@ -1,42 +1,53 @@
 # RAG-Noah - Multi-Modal LLM Assistant 🤖
 
-**A comprehensive RAG (Retrieval Augmented Generation) system built with LLaMA 3.1 for organizations to embed their data and help clients extract relevant information efficiently.**
+**A comprehensive RAG (Retrieval Augmented Generation) system built with multiple LLMs via GROQ API for organizations to embed their data and help clients extract relevant information efficiently.**
 
 ## 🚀 Live Demo
 **Test the webapp now:** https://rag-noah.streamlit.app/
 
 *Note: Camera features are available in local setup only due to web deployment limitations.*
 
+![RAG Architecture](imagefiles/rag_architecture.png)
+
 ## 📋 Project Overview
 
-RAG-Noah is a multi-modal intelligent assistant that combines:
-- **RAG LLM**: For accurate information retrieval from organizational data
-- **General LLM**: With real-time computer vision capabilities for enhanced user interaction
+RAG-Noah is a multi-modal intelligent assistant with **two distinct modes**:
 
-Perfect for organizations looking to embed their data (policies, procedures, FAQs) and provide clients with instant access to relevant information like cutoffs, booking procedures, and institutional guidelines.
+### 1. RAG Noah (Main Page)
+A document-based Q&A assistant that processes PDFs and websites to answer questions from your uploaded content.
+
+### 2. Noah (Sidebar Navigation → "Noah")
+A general-purpose assistant with real-time computer vision capabilities including object detection and hand tracking.
+
+Perfect for organizations looking to embed their data (policies, procedures, FAQs) and provide clients with instant access to relevant information.
 
 ## 🛠️ Tech Stack
 
-- **Language**: Python
-- **Framework**: Streamlit
-- **LLM**: LLaMA 3.1 (via GROQ API)
-- **Vector Database**: ChromaDB
-- **Embeddings**: HuggingFace Transformers
-- **Computer Vision**: OpenCV
-- **Speech Processing**: SpeechRecognition, gTTS
+| Component | Technology |
+|-----------|------------|
+| **Language** | Python 3.8+ |
+| **Framework** | Streamlit |
+| **LLMs** | Gemma (query refinement) + LLaMA 70B (response generation) via GROQ API |
+| **Vector Database** | FAISS (Facebook AI Similarity Search) |
+| **Embeddings** | `nomic-ai/nomic-embed-text-v1` (HuggingFace) |
+| **Object Detection** | YOLOv8n (Ultralytics) |
+| **Hand Tracking** | cvzone + MediaPipe |
+| **OCR** | EasyOCR |
+| **Speech** | streamlit-mic-recorder, gTTS |
 
 ## 🏃‍♂️ Quick Start
 
 ### Prerequisites
 - Python 3.8+
-- GROQ API key
+- 10 GROQ API keys (for rate limit handling with key rotation)
+- System packages: `libgl1`, `portaudio19-dev` (Linux/deployment)
 
 ### Installation
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/Sharkytony/Smart_glasses_project.git
-cd Smart_glasses_project
+git clone https://github.com/anthonyrodrigues443/RAG-Noah-Multi-Modal-LLM-Assistant.git
+cd RAG-Noah-Multi-Modal-LLM-Assistant
 ```
 
 2. **Create virtual environment**
@@ -59,8 +70,17 @@ pip install -r requirements.txt
 
 5. **Configure API keys**
 ```bash
-# Rename secrets_eg.toml to secrets.toml
-# Add your GROQ API key
+# Navigate to .streamlit folder
+cd .streamlit
+
+# Rename the example file
+# Windows:
+ren secrets_eg.toml secrets.toml
+# macOS/Linux:
+mv secrets_eg.toml secrets.toml
+
+# Edit secrets.toml and add your 10 GROQ API keys
+# The system rotates through these keys to handle rate limits
 ```
 
 6. **Run the application**
@@ -70,59 +90,81 @@ streamlit run RAG_Noah.py
 
 ## 🎯 Core Features
 
-### RAG-Noah (Document Intelligence)
+### RAG Noah (Document Intelligence)
 
 **Multi-Source Data Integration**
 - PDF document processing and text extraction
 - Website content scraping and indexing
-- Database integration for organizational data
 
 **Advanced Query Processing**
 - Text input with natural language understanding
 - Voice input with speech-to-text conversion
-- Visual input with text extraction from images
+- Visual input with OCR text extraction from camera
 
 **Intelligent Information Retrieval**
-- Vector-based similarity search
-- Context-aware query completion using chat history
-- Top-k relevant chunk retrieval for accurate responses
+- Vector-based similarity search using FAISS
+- Context-aware query refinement using chat history
+- Top-4 relevant chunk retrieval for accurate responses
 
 **Enhanced User Experience**
-- Real-time response generation
+- Streaming response generation
 - Text-to-speech output
 - Conversation history maintenance
 
 ### Noah (Multi-Modal Assistant)
 
 **Computer Vision Capabilities**
-- Real-time object detection
-- Hand tracking and gesture recognition
-- Finger counting with detailed finger identification
+- Real-time object detection using YOLOv8n
+- Hand tracking with finger counting (identifies which specific fingers are up)
+- 5-second capture window for vision analysis
 
 **Adaptive Processing**
-- Intelligent query classification (visual/non-visual)
-- Conditional computer vision activation for optimal performance
-- Multi-modal input processing
+- Intelligent query classification determines if camera is needed
+- Conditional computer vision activation (only when visually-relevant questions asked)
+- Multi-modal input processing (text, voice, camera)
 
 ## 🔧 Technical Architecture
 
 ### RAG Pipeline
 1. **Document Processing**: Extract and concatenate text from PDFs and websites
-2. **Text Chunking**: Split content into manageable, semantically meaningful chunks
-3. **Vector Embeddings**: Convert text chunks into high-dimensional vectors
-4. **Vector Storage**: Store embeddings in ChromaDB for efficient retrieval
-5. **Query Enhancement**: Complete incomplete queries using conversation context
-6. **Similarity Search**: Find most relevant chunks using vector similarity
-7. **Response Generation**: Generate contextual responses using LLaMA 3.1
+2. **Text Chunking**: Split into 1024-token chunks with 256-token overlap
+3. **Vector Embeddings**: Convert chunks using `nomic-embed-text-v1`
+4. **Vector Storage**: Store embeddings in FAISS for efficient retrieval
+5. **Query Refinement**: Fix grammar/incomplete queries using Gemma model
+6. **Similarity Search**: Retrieve top-4 most relevant chunks
+7. **Response Generation**: Generate contextual responses using LLaMA 70B
 
-### Dual-API Architecture
-- **API 1**: Query classification and context completion
-- **API 2**: Final response generation with enhanced context
+### Dual-Model Architecture
 
-This approach ensures:
-- Precise information retrieval
-- Improved query quality through context awareness
-- Efficient resource utilization
+The system uses two LLM calls per query for optimal results:
+
+| Stage | Model | Purpose |
+|-------|-------|---------|
+| **API Call 1** | Gemma | Query refinement - fixes spelling, grammar, expands incomplete questions using chat history |
+| **API Call 2** | LLaMA 70B Versatile | Response generation with retrieved context chunks |
+
+**For Noah (vision assistant):**
+| Stage | Model | Purpose |
+|-------|-------|---------|
+| **API Call 1** | LLaMA 70B | Classifies if camera is needed (yes/no) based on question |
+| **API Call 2** | LLaMA 70B | Generates response, including vision observations if camera was activated |
+
+## 💡 Example Interactions
+
+### RAG Mode
+```
+1. Upload your company's HR policy PDF
+2. Ask: "What is the leave policy for new employees?"
+3. System retrieves relevant chunks and generates contextual answer
+```
+
+### Noah Mode
+```
+1. Ask: "How many fingers am I holding up?"
+2. System activates camera for 5 seconds
+3. Detects: "3 fingers up on right hand (index, middle, ring)"
+4. Responds with accurate finger count
+```
 
 ## 🎨 Use Cases
 
@@ -132,29 +174,24 @@ This approach ensures:
 - **Knowledge Management**: Centralized access to organizational knowledge base
 
 ### For Educational Institutions
-- **Student Queries**: Information about admission cutoffs, booking procedures
+- **Student Queries**: Information about admission cutoffs, procedures
 - **Academic Support**: Course materials and curriculum information
 - **Administrative Assistance**: Policy and procedure clarification
 
-## 🔐 Security & Reliability
-
-- **Robust Prompting**: Prevents jailbreaking attempts
-- **Data Privacy**: Secure handling of organizational data
-- **Error Handling**: Comprehensive error management for stable operation
-
 ## 📊 Performance Highlights
 
-- **Accurate Retrieval**: Context-aware information extraction
-- **Fast Response**: Optimized vector search for quick results
-- **Scalable**: Easy integration into existing web applications
+- **Accurate Retrieval**: Context-aware information extraction with query refinement
+- **Fast Response**: Optimized FAISS vector search
+- **Rate Limit Handling**: 10-key rotation system for uninterrupted service
 - **Multi-Modal**: Support for text, voice, and visual inputs
 
 ## 🛣️ Future Enhancements
 
 - **Fine-tuned LLM**: Custom model training for domain-specific improvements
 - **Image Understanding**: Advanced image captioning and analysis
-- **Enhanced Integration**: Extended database connectivity options
-- **Real-time Collaboration**: Multi-user support with shared knowledge bases
+- **Reranking**: Cross-encoder reranking for improved retrieval (code ready, commented out)
+- **Database Integration**: Extended connectivity options
+- **Web Camera Support**: Enable camera features in deployed web app
 
 ## 🤝 Contributing
 
