@@ -41,7 +41,7 @@ st.markdown("""<style>
 }
 </style>""", unsafe_allow_html=True)
 
-git = st.sidebar.link_button('Github', 'https://github.com/Sharkytony', type='primary', use_container_width=True)
+git = st.sidebar.link_button('Github', 'https://github.com/anthonyrodrigues443', type='primary', use_container_width=True)
 
 
 st.sidebar.link_button('LinkedIn', 'https://linkedin.com/in/anthonyrodrigues443', type='primary', use_container_width=True)
